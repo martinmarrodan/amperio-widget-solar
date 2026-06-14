@@ -740,6 +740,9 @@
             <a href="https://amperio.com.ar/site/#contacto" class="cta-btn" target="_blank">
               Solicitá tu presupuesto <span>→</span>
             </a>
+            <button class="btn btn-outline" style="margin-top:10px" onclick="switchTab('live')">
+              Ver simulación de tu sistema en vivo
+            </button>
           </div>
           <div class="result-placeholder">
             <div class="result-placeholder-icon">☀️</div>
@@ -852,6 +855,11 @@
     document.getElementById('res-ahorro').innerHTML = '$' + ahorroARS;
     document.getElementById('res-co2').innerHTML = co2Anual + ' <em>kg</em>';
     document.getElementById('res-retorno').innerHTML = (costoUSD / ahorroUSD).toFixed(1) + ' <em>años</em>';
+
+    // Sincronizar paneles con el tab de monitoreo
+    document.getElementById('live-paneles').value = paneles;
+    energyToday = 0;
+    updateMax();
 
     const el = document.getElementById('resultado');
     el.classList.remove('result-hidden');
