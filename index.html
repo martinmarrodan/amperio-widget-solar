@@ -1054,15 +1054,25 @@
 
   async function fetchSunTimes() {
     try {
-      const r = await fetch('https://api.sunrise-sunset.org/json?lat=-34.61&lng=-58.38&date=today&formatted=0');
+      // 1. Geolocalización por IP
+      let lat = -34.61, lng = -58.38; // fallback: Buenos Aires
+      try {
+        const geo = await fetch('https://ipapi.co/json/');
+        const geoData = await geo.json();
+        if (geoData.latitude) { lat = geoData.latitude; lng = geoData.longitude; }
+      } catch(e) {}
+
+      // 2. Horarios del sol para esa ubicación
+      const r = await fetch(`https://api.sunrise-sunset.org/json?lat=${lat}&lng=${lng}&date=today&formatted=0`);
       const d = await r.json();
       if (d.status === 'OK') {
-        const toArg = iso => {
+        // Usa la hora local del browser (ya maneja la zona horaria correcta)
+        const toLocal = iso => {
           const dt = new Date(iso);
-          return ((dt.getUTCHours() - 3 + 24) % 24) + dt.getUTCMinutes() / 60;
+          return dt.getHours() + dt.getMinutes() / 60;
         };
-        dynSunRise = toArg(d.results.sunrise);
-        dynSunSet  = toArg(d.results.sunset);
+        dynSunRise = toLocal(d.results.sunrise);
+        dynSunSet  = toLocal(d.results.sunset);
         drawChart();
       }
     } catch(e) {}
