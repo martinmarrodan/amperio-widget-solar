@@ -562,6 +562,94 @@
 
     .footer-card .f-link:hover { text-decoration: underline; }
 
+    /* ---- FLOW DIAGRAM ---- */
+    .flow-diagram { margin-bottom: 20px; }
+
+    .flow-inner {
+      position: relative;
+      width: 100%;
+      padding-bottom: 54.17%; /* mantiene proporción 480:260 */
+      height: 0;
+    }
+
+    .flow-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .flow-node {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .flow-node img { width: 100%; display: block; object-fit: contain; }
+
+    /* Paneles: arriba centro */
+    .fn-paneles { left: 50%; transform: translateX(-50%); top: 0; width: 22%; }
+
+    /* Red: izquierda, centrada verticalmente */
+    .fn-red { left: 0; top: 46%; transform: translateY(-50%); width: 14%; }
+
+    /* Casa: derecha */
+    .fn-casa { right: 0; top: 22%; width: 30%; }
+
+    .flow-lbl {
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--gray);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .flow-kw-badge {
+      background: var(--green);
+      color: var(--dark);
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: var(--radius-pill);
+      white-space: nowrap;
+    }
+
+    /* Paths SVG animados */
+    .flow-path {
+      fill: none;
+      stroke-width: 3;
+      stroke-dasharray: 8 6;
+      stroke-linecap: round;
+      opacity: 0.1;
+      transition: opacity 0.8s;
+    }
+
+    .flow-path.active {
+      opacity: 1;
+      animation: flowDash 0.7s linear infinite;
+    }
+
+    .flow-path-solar { stroke: #7ecb35; }
+    .flow-path-red   { stroke: #94a3b8; }
+
+    @keyframes flowDash {
+      from { stroke-dashoffset: 28; }
+      to   { stroke-dashoffset:  0; }
+    }
+
+    .flow-state-label {
+      text-align: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--gray);
+      margin-top: 8px;
+      letter-spacing: 0.02em;
+    }
+
     /* ---- PANEL VISIBILITY ---- */
     .panel { display: none; }
     .panel.active { display: block; }
@@ -757,28 +845,63 @@
     <div class="panel" id="panel-live">
       <p class="section-label">Simulación en tiempo real</p>
 
+      <!-- Diagrama de flujo energético -->
+      <div class="flow-diagram">
+        <div class="flow-inner">
+
+          <!-- SVG: líneas animadas de conexión -->
+          <svg class="flow-svg" viewBox="0 0 480 260" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Paneles → Casa -->
+            <path id="path-solar" class="flow-path flow-path-solar"
+                  d="M 240 75 C 240 155 295 132 336 129"/>
+            <!-- Red → Casa -->
+            <path id="path-red" class="flow-path flow-path-red"
+                  d="M 67 120 C 185 120 260 127 336 129"/>
+          </svg>
+
+          <!-- Paneles (arriba centro) -->
+          <div class="flow-node fn-paneles">
+            <img src="grafico_solar/paneles_solares.png" alt="Paneles solares">
+            <div class="flow-kw-badge" id="flow-kw-badge">– kW</div>
+            <span class="flow-lbl">Paneles solares</span>
+          </div>
+
+          <!-- Red eléctrica (izquierda) -->
+          <div class="flow-node fn-red">
+            <img src="grafico_solar/red_electrica.png" alt="Red eléctrica">
+            <span class="flow-lbl">Red eléctrica</span>
+          </div>
+
+          <!-- Casa (derecha) -->
+          <div class="flow-node fn-casa">
+            <img id="casa-img" src="grafico_solar/casa_sin_luz.png" alt="Tu hogar">
+            <span class="flow-lbl">Tu hogar</span>
+          </div>
+
+        </div>
+        <div class="flow-state-label" id="flow-state-label">–</div>
+      </div>
+
+      <!-- Barra de potencia -->
+      <div class="power-track">
+        <div class="power-fill" id="power-fill" style="width:0%"></div>
+      </div>
+      <div class="power-labels">
+        <span>0 kW</span>
+        <span id="bar-max-label">máx. – kW</span>
+      </div>
+
+      <!-- Config paneles -->
       <div class="live-config">
         <label style="font-size:13px;font-weight:700;color:var(--text);display:block;margin-bottom:8px">Paneles instalados</label>
         <div class="input-wrap" style="max-width:180px">
-          <input type="number" id="live-paneles" value="8" min="1" max="200" oninput="updateMax()" />
+          <input type="number" id="live-paneles" value="8" min="1" max="200" oninput="updateMax()"/>
           <span class="unit">paneles</span>
         </div>
       </div>
 
-      <div class="live-main">
-        <div class="live-kw-big" id="live-kw-val">– <em>kW</em></div>
-        <div class="live-sublabel">generando ahora</div>
-        <div class="power-track">
-          <div class="power-fill" id="power-fill" style="width:0%"></div>
-        </div>
-        <div class="power-labels">
-          <span>0 kW</span>
-          <span id="bar-max-label">máx. – kW</span>
-        </div>
-      </div>
-
       <div class="live-bottom">
-        <!-- Curve chart -->
+        <!-- Chart -->
         <div class="chart-wrap">
           <div class="chart-header">
             <span class="chart-title">Curva de generación diaria</span>
@@ -1061,13 +1184,42 @@
     const max   = getMaxKw();
     energyToday += power * (2 / 3600);
 
-    document.getElementById('live-kw-val').innerHTML = power.toFixed(2) + ' <em>kW</em>';
     document.getElementById('power-fill').style.width = (max > 0 ? Math.min(100, power / max * 100) : 0) + '%';
     document.getElementById('stat-hoy').textContent = energyToday.toFixed(2);
     document.getElementById('stat-co2').textContent = (energyToday * 0.4).toFixed(2);
     document.getElementById('stat-arb').textContent = (energyToday * 0.4 / 21.7).toFixed(3);
     updateMax();
+    updateFlowDiagram(power, max);
     drawChart();
+  }
+
+  function updateFlowDiagram(power, maxKw) {
+    const month = new Date().getMonth();
+    const [rise, set] = SUN_TIMES[month];
+    const noon = (rise + set) / 2;
+    const peakKw = solarPower(noon, maxKw, month);
+    const ratio  = peakKw > 0 ? power / peakKw : 0;
+
+    // Estado según hora solar
+    const state = ratio < 0.05 ? 'night' : ratio < 0.55 ? 'mixed' : 'solar';
+
+    // Activar/desactivar paths
+    document.getElementById('path-solar').classList.toggle('active', state !== 'night');
+    document.getElementById('path-red').classList.toggle('active',   state !== 'solar');
+
+    // Casa con luz cuando hay energía entrando (siempre en on-grid)
+    document.getElementById('casa-img').src = 'grafico_solar/casa_con_luz.png';
+
+    // Badge kW sobre paneles
+    document.getElementById('flow-kw-badge').textContent = power.toFixed(2) + ' kW';
+
+    // Label de estado
+    const labels = {
+      night: '🔌 Energía de la red eléctrica',
+      mixed: '☀️ Solar + red combinados',
+      solar: '☀️ Solo energía solar'
+    };
+    document.getElementById('flow-state-label').textContent = labels[state];
   }
 
   // Redibujar si cambia el tamaño
