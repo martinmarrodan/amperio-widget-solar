@@ -568,7 +568,7 @@
     .flow-inner {
       position: relative;
       width: 100%;
-      padding-bottom: 54.17%; /* mantiene proporción 480:260 */
+      padding-bottom: 62.5%; /* proporción 480:300 */
       height: 0;
     }
 
@@ -578,6 +578,38 @@
       width: 100%;
       height: 100%;
     }
+
+    /* Líneas base guía */
+    .base-line {
+      stroke: #e5e7eb;
+      stroke-width: 2;
+    }
+
+    /* Segmentos animados */
+    .flow-seg {
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-dasharray: 6 10;
+      opacity: 0;
+      transition: opacity 0.6s;
+    }
+
+    .flow-seg.active {
+      opacity: 1;
+      animation: flowDots 0.8s linear infinite;
+    }
+
+    .seg-solar { stroke: #7ecb35; }
+    .seg-house { stroke: #7ecb35; }
+    .seg-grid  { stroke: #94a3b8; }
+
+    @keyframes flowDots {
+      from { stroke-dashoffset: 32; }
+      to   { stroke-dashoffset:  0; }
+    }
+
+    /* Nodo central activo */
+    #junction-dot.active { fill: #7ecb35; }
 
     .flow-node {
       position: absolute;
@@ -592,11 +624,11 @@
     /* Paneles: arriba centro */
     .fn-paneles { left: 50%; transform: translateX(-50%); top: 0; width: 22%; }
 
-    /* Red: izquierda, centrada verticalmente */
-    .fn-red { left: 0; top: 46%; transform: translateY(-50%); width: 14%; }
+    /* Casa: abajo izquierda */
+    .fn-casa { left: 1%; top: 57%; width: 28%; }
 
-    /* Casa: derecha */
-    .fn-casa { right: 0; top: 22%; width: 30%; }
+    /* Red: abajo derecha */
+    .fn-red { right: 1%; top: 54%; width: 16%; }
 
     .flow-lbl {
       font-size: 9px;
@@ -616,29 +648,6 @@
       padding: 3px 10px;
       border-radius: var(--radius-pill);
       white-space: nowrap;
-    }
-
-    /* Paths SVG animados */
-    .flow-path {
-      fill: none;
-      stroke-width: 3;
-      stroke-dasharray: 8 6;
-      stroke-linecap: round;
-      opacity: 0.1;
-      transition: opacity 0.8s;
-    }
-
-    .flow-path.active {
-      opacity: 1;
-      animation: flowDash 0.7s linear infinite;
-    }
-
-    .flow-path-solar { stroke: #7ecb35; }
-    .flow-path-red   { stroke: #94a3b8; }
-
-    @keyframes flowDash {
-      from { stroke-dashoffset: 28; }
-      to   { stroke-dashoffset:  0; }
     }
 
     .flow-state-label {
@@ -849,14 +858,40 @@
       <div class="flow-diagram">
         <div class="flow-inner">
 
-          <!-- SVG: líneas animadas de conexión -->
-          <svg class="flow-svg" viewBox="0 0 480 260" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-            <!-- Paneles → Casa -->
-            <path id="path-solar" class="flow-path flow-path-solar"
-                  d="M 240 75 C 240 155 295 132 336 129"/>
-            <!-- Red → Casa -->
-            <path id="path-red" class="flow-path flow-path-red"
-                  d="M 67 120 C 185 120 260 127 336 129"/>
+          <svg class="flow-svg" viewBox="0 0 480 300" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="arr-solar" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+                <path d="M 0 0 L 8 4 L 0 8 Z" fill="#7ecb35"/>
+              </marker>
+              <marker id="arr-grid" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+                <path d="M 0 0 L 8 4 L 0 8 Z" fill="#94a3b8"/>
+              </marker>
+              <marker id="arr-house" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+                <path d="M 0 0 L 8 4 L 0 8 Z" fill="#7ecb35"/>
+              </marker>
+            </defs>
+
+            <!-- Base lines (guías siempre visibles) -->
+            <line class="base-line" x1="240" y1="90" x2="240" y2="240"/>
+            <line class="base-line" x1="145" y1="240" x2="335" y2="240"/>
+
+            <!-- Segmento: Paneles → Nodo (vertical, baja) -->
+            <line id="path-solar" class="flow-seg seg-solar"
+                  x1="240" y1="90" x2="240" y2="236"
+                  marker-end="url(#arr-solar)"/>
+
+            <!-- Segmento: Nodo → Casa (horizontal, va a la izquierda) -->
+            <line id="path-house" class="flow-seg seg-house"
+                  x1="238" y1="240" x2="148" y2="240"
+                  marker-end="url(#arr-house)"/>
+
+            <!-- Segmento: Red → Nodo (horizontal, va a la izquierda) -->
+            <line id="path-grid" class="flow-seg seg-grid"
+                  x1="332" y1="240" x2="244" y2="240"
+                  marker-end="url(#arr-grid)"/>
+
+            <!-- Nodo central -->
+            <circle cx="240" cy="240" r="5" fill="#e5e7eb" id="junction-dot"/>
           </svg>
 
           <!-- Paneles (arriba centro) -->
@@ -866,16 +901,16 @@
             <span class="flow-lbl">Paneles solares</span>
           </div>
 
-          <!-- Red eléctrica (izquierda) -->
-          <div class="flow-node fn-red">
-            <img src="grafico_solar/red_electrica.png" alt="Red eléctrica">
-            <span class="flow-lbl">Red eléctrica</span>
-          </div>
-
-          <!-- Casa (derecha) -->
+          <!-- Casa (abajo izquierda) -->
           <div class="flow-node fn-casa">
             <img id="casa-img" src="grafico_solar/casa_sin_luz.png" alt="Tu hogar">
             <span class="flow-lbl">Tu hogar</span>
+          </div>
+
+          <!-- Red eléctrica (abajo derecha) -->
+          <div class="flow-node fn-red">
+            <img src="grafico_solar/red_electrica.png" alt="Red eléctrica">
+            <span class="flow-lbl">Red eléctrica</span>
           </div>
 
         </div>
@@ -1200,20 +1235,24 @@
     const peakKw = solarPower(noon, maxKw, month);
     const ratio  = peakKw > 0 ? power / peakKw : 0;
 
-    // Estado según hora solar
     const state = ratio < 0.05 ? 'night' : ratio < 0.55 ? 'mixed' : 'solar';
 
-    // Activar/desactivar paths
-    document.getElementById('path-solar').classList.toggle('active', state !== 'night');
-    document.getElementById('path-red').classList.toggle('active',   state !== 'solar');
+    const solarOn = state !== 'night';
+    const gridOn  = state !== 'solar';
+    const houseOn = solarOn || gridOn;
 
-    // Casa con luz cuando hay energía entrando (siempre en on-grid)
+    document.getElementById('path-solar').classList.toggle('active', solarOn);
+    document.getElementById('path-grid').classList.toggle('active',  gridOn);
+    document.getElementById('path-house').classList.toggle('active', houseOn);
+    document.getElementById('junction-dot').classList.toggle('active', houseOn);
+
+    // Segmento casa hereda color según fuente dominante
+    document.getElementById('path-house').style.stroke =
+      state === 'night' ? '#94a3b8' : '#7ecb35';
+
     document.getElementById('casa-img').src = 'grafico_solar/casa_con_luz.png';
-
-    // Badge kW sobre paneles
     document.getElementById('flow-kw-badge').textContent = power.toFixed(2) + ' kW';
 
-    // Label de estado
     const labels = {
       night: '🔌 Energía de la red eléctrica',
       mixed: '☀️ Solar + red combinados',
