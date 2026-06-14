@@ -66,7 +66,7 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
     }
 
     .brand svg { width: 28px; height: 28px; }
@@ -78,33 +78,12 @@
       letter-spacing: -0.5px;
     }
 
-    /* ---- HERO CARD ---- */
-    .hero-card {
-      background: var(--dark);
-      border-radius: var(--radius-lg);
-      padding: 36px 36px 32px;
-      position: relative;
-      overflow: hidden;
-      margin-bottom: 16px;
-    }
-
-    .hero-card::before {
-      content: '';
-      position: absolute;
-      width: 280px;
-      height: 280px;
-      background: radial-gradient(circle, rgba(126,203,53,0.35) 0%, transparent 70%);
-      top: -60px;
-      right: -60px;
-      border-radius: 50%;
-      pointer-events: none;
-    }
-
+    /* ---- HERO HEADER (fuera de la tarjeta) ---- */
     .hero-tag {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: rgba(126,203,53,0.15);
+      background: rgba(126,203,53,0.12);
       border: 1px solid rgba(126,203,53,0.3);
       color: var(--green);
       font-size: 11px;
@@ -129,22 +108,44 @@
       50% { opacity: 0.3; }
     }
 
-    .hero-card h1 {
-      font-size: 38px;
+    .hero-title {
+      font-size: 48px;
       font-weight: 900;
-      color: var(--white);
-      line-height: 1.05;
-      letter-spacing: -1.5px;
-      margin-bottom: 4px;
+      color: var(--text);
+      line-height: 1.0;
+      letter-spacing: -2px;
+      margin-bottom: 10px;
     }
 
-    .hero-card h1 span { color: var(--green); }
+    .hero-title span { color: var(--green); }
 
-    .hero-card p {
-      color: rgba(255,255,255,0.5);
+    .hero-sub {
+      color: var(--gray);
       font-size: 14px;
-      margin-top: 10px;
       font-weight: 500;
+      margin-bottom: 24px;
+    }
+
+    /* ---- HERO CARD (solo tabs) ---- */
+    .hero-card {
+      background: var(--dark);
+      border-radius: var(--radius-lg);
+      padding: 20px 24px;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .hero-card::before {
+      content: '';
+      position: absolute;
+      width: 280px;
+      height: 280px;
+      background: radial-gradient(circle, rgba(126,203,53,0.35) 0%, transparent 70%);
+      top: -80px;
+      right: -60px;
+      border-radius: 50%;
+      pointer-events: none;
     }
 
     /* ---- TABS ---- */
@@ -564,9 +565,9 @@
     @media (min-width: 720px) {
       .widget { max-width: 960px; }
 
-      .hero-card { padding: 48px 48px 44px; }
-      .hero-card h1 { font-size: 52px; }
-      .tabs { max-width: 400px; }
+      .hero-title { font-size: 64px; letter-spacing: -3px; }
+      .hero-card { padding: 20px 32px; }
+      .tabs { max-width: 420px; }
 
       .main-card { padding: 40px 16px; }
 
@@ -637,16 +638,16 @@
     <span class="brand-name">amperio</span>
   </div>
 
-  <!-- Hero card (dark) -->
+  <!-- Hero header (fuera de la tarjeta) -->
+  <div class="hero-tag">
+    <div class="live-dot"></div>
+    Energía Solar
+  </div>
+  <h1 class="hero-title">Generación<br><span>solar</span></h1>
+  <p class="hero-sub">Calculá tu sistema y monitoreá en tiempo real</p>
+
+  <!-- Dark card — solo tabs -->
   <div class="hero-card">
-    <div class="hero-tag">
-      <div class="live-dot"></div>
-      Energía Solar
-    </div>
-
-    <h1>Generación<br><span>solar</span></h1>
-    <p>Calculá tu sistema y monitoreá en tiempo real</p>
-
     <div class="tabs">
       <button class="tab-btn active" onclick="switchTab('estimador')">Estimador de paneles</button>
       <button class="tab-btn" onclick="switchTab('live')">Generación en vivo</button>
