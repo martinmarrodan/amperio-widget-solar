@@ -616,7 +616,7 @@
     .fn-paneles { left: 50%; transform: translateX(-50%); top: 0; width: 22%; }
 
     /* Casa: abajo izquierda */
-    .fn-casa { left: 1%; top: 55%; width: 20%; }
+    .fn-casa { left: 1%; top: 53%; width: 24%; }
 
     /* Red: abajo derecha */
     .fn-red { right: 1%; top: 53%; width: 20%; }
@@ -852,19 +852,19 @@
           <svg class="flow-svg" viewBox="0 0 480 300" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
             <defs>
               <!-- Paths para animateMotion -->
-              <path id="def-solar" d="M 240 88 L 240 234"/>
-              <path id="def-house" d="M 237 240 L 106 240"/>
-              <path id="def-grid"  d="M 374 240 L 243 240"/>
+              <path id="def-solar" d="M 240 88 L 240 194"/>
+              <path id="def-house" d="M 237 200 L 106 200"/>
+              <path id="def-grid"  d="M 374 200 L 243 200"/>
             </defs>
 
             <!-- Líneas base (guía siempre visible) -->
-            <line class="base-line" x1="240" y1="88" x2="240" y2="240"/>
-            <line class="base-line" x1="106" y1="240" x2="374" y2="240"/>
+            <line class="base-line" x1="240" y1="88" x2="240" y2="200"/>
+            <line class="base-line" x1="106" y1="200" x2="374" y2="200"/>
 
             <!-- Líneas activas coloreadas -->
-            <line id="path-solar" class="flow-seg seg-solar" x1="240" y1="88"  x2="240" y2="236"/>
-            <line id="path-house" class="flow-seg seg-house" x1="237" y1="240" x2="106" y2="240"/>
-            <line id="path-grid"  class="flow-seg seg-grid"  x1="374" y1="240" x2="243" y2="240"/>
+            <line id="path-solar" class="flow-seg seg-solar" x1="240" y1="88"  x2="240" y2="196"/>
+            <line id="path-house" class="flow-seg seg-house" x1="237" y1="200" x2="106" y2="200"/>
+            <line id="path-grid"  class="flow-seg seg-grid"  x1="374" y1="200" x2="243" y2="200"/>
 
             <!-- Flechita solar (baja desde paneles) -->
             <g id="arr-solar" style="visibility:hidden">
@@ -891,7 +891,7 @@
             </g>
 
             <!-- Nodo central -->
-            <circle cx="240" cy="240" r="4" fill="#e5e7eb" id="junction-dot"/>
+            <circle cx="240" cy="200" r="4" fill="#e5e7eb" id="junction-dot"/>
           </svg>
 
           <!-- Paneles (arriba centro) -->
