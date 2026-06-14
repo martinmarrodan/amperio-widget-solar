@@ -1091,7 +1091,7 @@
   }
 
   // -- Chart
-  const CHART_STEPS = 200; // puntos en el eje X
+  const CHART_STEPS = 600;
 
   function drawChart() {
     const canvas = document.getElementById('solar-chart');
@@ -1154,8 +1154,9 @@
       ctx.bezierCurveTo(cpx, prev.y, cpx, curr.y, curr.x, curr.y);
     }
     ctx.strokeStyle = '#7ecb35';
-    ctx.lineWidth = 1;
+    ctx.lineWidth = 1.5;
     ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
     ctx.stroke();
 
     // Eje X — horas
