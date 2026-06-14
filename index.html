@@ -1084,10 +1084,14 @@
     if (hour <= rise || hour >= set) return 0;
     const midday = (rise + set) / 2;
     const halfWidth = (set - rise) / 2;
-    // Sigma ajustado para que la curva arranque y termine suave (≈0% en amanecer/atardecer)
-    const norm = (hour - midday) / (halfWidth * 0.22);
+    // Campana amplia y realista
+    const norm  = (hour - midday) / (halfWidth * 0.72);
     const gauss = Math.exp(-0.5 * norm * norm);
-    return maxKw * mf * gauss;
+    // Transición suave en bordes (smoothstep 30 min) en lugar de corte abrupto
+    const smoothstep = t => t <= 0 ? 0 : t >= 1 ? 1 : t * t * (3 - 2 * t);
+    const fade = 0.5; // horas de transición
+    const blend = Math.min(smoothstep((hour - rise) / fade), smoothstep((set - hour) / fade));
+    return maxKw * mf * gauss * blend;
   }
 
   // -- Chart
