@@ -540,6 +540,73 @@
     /* ---- PANEL VISIBILITY ---- */
     .panel { display: none; }
     .panel.active { display: block; }
+
+    /* ---- RESPONSIVE LAYOUT ---- */
+    .estimador-layout { display: block; }
+    .result-placeholder { display: none; }
+    .live-bottom { display: block; }
+
+    @media (min-width: 720px) {
+      .widget { max-width: 960px; }
+
+      .hero-card { padding: 48px 48px 44px; }
+      .hero-card h1 { font-size: 52px; }
+      .tabs { max-width: 400px; }
+
+      .main-card { padding: 40px 16px; }
+
+      /* Estimador: form izquierda / resultado derecha */
+      .estimador-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 56px;
+        align-items: start;
+      }
+
+      /* Placeholder visible en desktop hasta que se calcule */
+      .result-placeholder {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        min-height: 300px;
+        border: 2px dashed var(--gray-light);
+        border-radius: var(--radius-lg);
+        color: var(--gray);
+        font-size: 13px;
+        font-weight: 600;
+        text-align: center;
+        line-height: 1.6;
+      }
+      .result-placeholder-icon { font-size: 32px; }
+
+      /* Ocultar placeholder cuando resultado está visible */
+      #resultado:not(.result-hidden) ~ .result-placeholder { display: none; }
+
+      /* Live: chart izquierda / stats derecha */
+      .live-bottom {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 40px;
+        align-items: start;
+        margin-top: 24px;
+      }
+
+      .stat-grid {
+        grid-template-columns: 1fr;
+        margin-top: 0;
+        min-width: 140px;
+      }
+
+      .stat-chip {
+        border-top: none;
+        border-bottom: 2px solid var(--gray-light);
+        padding: 14px 0;
+      }
+
+      .chart-wrap { margin-top: 0; }
+    }
   </style>
 </head>
 <body>
@@ -577,72 +644,82 @@
     <!-- Estimador -->
     <div class="panel active" id="panel-estimador">
       <p class="section-label">Calculá tu sistema</p>
+      <div class="estimador-layout">
 
-      <div class="form-group">
-        <label>¿Cuál es tu consumo mensual?</label>
-        <div class="input-wrap">
-          <input type="number" id="consumo" value="350" min="50" max="3000" oninput="syncSlider()" />
-          <span class="unit">kWh / mes</span>
-        </div>
-        <input type="range" id="consumo-slider" min="50" max="3000" value="350" oninput="syncInput()" />
-        <div class="range-labels"><span>50 kWh</span><span>3.000 kWh</span></div>
-      </div>
+        <div class="estimador-form">
+          <div class="form-group">
+            <label>¿Cuál es tu consumo mensual?</label>
+            <div class="input-wrap">
+              <input type="number" id="consumo" value="350" min="50" max="3000" oninput="syncSlider()" />
+              <span class="unit">kWh / mes</span>
+            </div>
+            <input type="range" id="consumo-slider" min="50" max="3000" value="350" oninput="syncInput()" />
+            <div class="range-labels"><span>50 kWh</span><span>3.000 kWh</span></div>
+          </div>
 
-      <div class="form-group">
-        <label>Provincia / zona solar</label>
-        <div class="select-wrap">
-          <select id="zona">
-            <option value="1.0">Buenos Aires</option>
-            <option value="1.1">CABA</option>
-            <option value="1.15">Córdoba</option>
-            <option value="1.2">Mendoza</option>
-            <option value="1.25">Salta / Jujuy</option>
-            <option value="1.3">San Luis / La Rioja</option>
-            <option value="0.85">Patagonia</option>
-            <option value="0.8">Tierra del Fuego</option>
-          </select>
-        </div>
-      </div>
+          <div class="form-group">
+            <label>Provincia / zona solar</label>
+            <div class="select-wrap">
+              <select id="zona">
+                <option value="1.0">Buenos Aires</option>
+                <option value="1.1">CABA</option>
+                <option value="1.15">Córdoba</option>
+                <option value="1.2">Mendoza</option>
+                <option value="1.25">Salta / Jujuy</option>
+                <option value="1.3">San Luis / La Rioja</option>
+                <option value="0.85">Patagonia</option>
+                <option value="0.8">Tierra del Fuego</option>
+              </select>
+            </div>
+          </div>
 
-      <div class="form-group">
-        <label>Tipo de instalación</label>
-        <div class="select-wrap">
-          <select id="tipo">
-            <option value="residencial">Residencial</option>
-            <option value="comercial">Comercial / Industrial</option>
-          </select>
-        </div>
-      </div>
+          <div class="form-group">
+            <label>Tipo de instalación</label>
+            <div class="select-wrap">
+              <select id="tipo">
+                <option value="residencial">Residencial</option>
+                <option value="comercial">Comercial / Industrial</option>
+              </select>
+            </div>
+          </div>
 
-      <button class="btn btn-primary" onclick="calcular()">Calculá tu sistema solar</button>
-
-      <div id="resultado" class="result-hidden">
-        <div class="result-grid">
-          <div class="result-chip">
-            <div class="val" id="res-paneles">–</div>
-            <div class="lbl">Paneles</div>
-          </div>
-          <div class="result-chip">
-            <div class="val" id="res-kw">–</div>
-            <div class="lbl">Potencia</div>
-          </div>
-          <div class="result-chip">
-            <div class="val" id="res-ahorro">–</div>
-            <div class="lbl">Ahorro mensual est.</div>
-          </div>
-          <div class="result-chip">
-            <div class="val" id="res-co2">– <em>kg</em></div>
-            <div class="lbl">CO₂ evitado / año</div>
-          </div>
-          <div class="result-chip dark">
-            <div class="val" id="res-retorno">–</div>
-            <div class="lbl">Retorno de inversión estimado</div>
-          </div>
+          <button class="btn btn-primary" onclick="calcular()">Calculá tu sistema solar</button>
         </div>
 
-        <a href="https://amperio.com.ar/site/#contacto" class="cta-btn" target="_blank">
-          Solicitá tu presupuesto <span>→</span>
-        </a>
+        <div class="estimador-result">
+          <div id="resultado" class="result-hidden">
+            <div class="result-grid">
+              <div class="result-chip">
+                <div class="val" id="res-paneles">–</div>
+                <div class="lbl">Paneles</div>
+              </div>
+              <div class="result-chip">
+                <div class="val" id="res-kw">–</div>
+                <div class="lbl">Potencia</div>
+              </div>
+              <div class="result-chip">
+                <div class="val" id="res-ahorro">–</div>
+                <div class="lbl">Ahorro mensual est.</div>
+              </div>
+              <div class="result-chip">
+                <div class="val" id="res-co2">– <em>kg</em></div>
+                <div class="lbl">CO₂ evitado / año</div>
+              </div>
+              <div class="result-chip dark">
+                <div class="val" id="res-retorno">–</div>
+                <div class="lbl">Retorno de inversión estimado</div>
+              </div>
+            </div>
+            <a href="https://amperio.com.ar/site/#contacto" class="cta-btn" target="_blank">
+              Solicitá tu presupuesto <span>→</span>
+            </a>
+          </div>
+          <div class="result-placeholder">
+            <div class="result-placeholder-icon">☀️</div>
+            <p>Completá los datos y presioná<br><strong>Calculá tu sistema solar</strong></p>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -670,30 +747,32 @@
         </div>
       </div>
 
-      <!-- Curve chart -->
-      <div class="chart-wrap">
-        <div class="chart-header">
-          <span class="chart-title">Curva de generación diaria</span>
-          <span class="chart-meta" id="chart-month-label">–</span>
+      <div class="live-bottom">
+        <!-- Curve chart -->
+        <div class="chart-wrap">
+          <div class="chart-header">
+            <span class="chart-title">Curva de generación diaria</span>
+            <span class="chart-meta" id="chart-month-label">–</span>
+          </div>
+          <canvas id="solar-chart"></canvas>
         </div>
-        <canvas id="solar-chart"></canvas>
-      </div>
 
-      <div class="stat-grid">
-        <div class="stat-chip">
-          <div class="s-icon">⚡</div>
-          <div class="s-val" id="stat-hoy">0.00</div>
-          <div class="s-lbl">kWh hoy</div>
-        </div>
-        <div class="stat-chip">
-          <div class="s-icon">🌿</div>
-          <div class="s-val" id="stat-co2">0.00</div>
-          <div class="s-lbl">kg CO₂ evitado</div>
-        </div>
-        <div class="stat-chip">
-          <div class="s-icon">🌳</div>
-          <div class="s-val" id="stat-arb">0</div>
-          <div class="s-lbl">árboles equiv.</div>
+        <div class="stat-grid">
+          <div class="stat-chip">
+            <div class="s-icon">⚡</div>
+            <div class="s-val" id="stat-hoy">0.00</div>
+            <div class="s-lbl">kWh hoy</div>
+          </div>
+          <div class="stat-chip">
+            <div class="s-icon">🌿</div>
+            <div class="s-val" id="stat-co2">0.00</div>
+            <div class="s-lbl">kg CO₂ evitado</div>
+          </div>
+          <div class="stat-chip">
+            <div class="s-icon">🌳</div>
+            <div class="s-val" id="stat-arb">0</div>
+            <div class="s-lbl">árboles equiv.</div>
+          </div>
         </div>
       </div>
     </div>
