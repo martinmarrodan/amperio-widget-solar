@@ -616,10 +616,10 @@
     .fn-paneles { left: 50%; transform: translateX(-50%); top: 0; width: 22%; }
 
     /* Casa: abajo izquierda */
-    .fn-casa { left: 1%; top: 53%; width: 24%; }
+    .fn-casa { left: 1%; top: 53%; width: 20%; }
 
     /* Red: abajo derecha */
-    .fn-red { right: 1%; top: 53%; width: 20%; }
+    .fn-red { right: 5%; top: 53%; width: 20%; }
 
     .flow-lbl {
       font-size: 9px;
@@ -854,17 +854,17 @@
               <!-- Paths para animateMotion -->
               <path id="def-solar" d="M 240 88 L 240 194"/>
               <path id="def-house" d="M 237 200 L 106 200"/>
-              <path id="def-grid"  d="M 374 200 L 243 200"/>
+              <path id="def-grid"  d="M 408 200 L 243 200"/>
             </defs>
 
             <!-- Líneas base (guía siempre visible) -->
             <line class="base-line" x1="240" y1="88" x2="240" y2="200"/>
-            <line class="base-line" x1="106" y1="200" x2="374" y2="200"/>
+            <line class="base-line" x1="106" y1="200" x2="408" y2="200"/>
 
             <!-- Líneas activas coloreadas -->
             <line id="path-solar" class="flow-seg seg-solar" x1="240" y1="88"  x2="240" y2="196"/>
             <line id="path-house" class="flow-seg seg-house" x1="237" y1="200" x2="106" y2="200"/>
-            <line id="path-grid"  class="flow-seg seg-grid"  x1="374" y1="200" x2="243" y2="200"/>
+            <line id="path-grid"  class="flow-seg seg-grid"  x1="408" y1="200" x2="243" y2="200"/>
 
             <!-- Flechita solar (baja desde paneles) -->
             <g id="arr-solar" style="visibility:hidden">
@@ -1259,12 +1259,15 @@
       'fill', state === 'night' ? '#94a3b8' : '#7ecb35'
     );
 
+    const casaNode = document.querySelector('.fn-casa');
     if (tipoInstalacion === 'comercial') {
       document.getElementById('casa-img').src = 'grafico_solar/industria.png';
       document.getElementById('casa-lbl').textContent = 'Tu empresa';
+      casaNode.style.width = '24%';
     } else {
       document.getElementById('casa-img').src = 'grafico_solar/casa_con_luz.png';
       document.getElementById('casa-lbl').textContent = 'Tu hogar';
+      casaNode.style.width = '20%';
     }
     document.getElementById('flow-kw-badge').textContent = power.toFixed(2) + ' kW';
 
