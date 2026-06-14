@@ -1091,7 +1091,7 @@
   }
 
   // -- Chart
-  const CHART_STEPS = 600;
+  const CHART_STEPS = 1440; // un punto por minuto
 
   function drawChart() {
     const canvas = document.getElementById('solar-chart');
@@ -1103,6 +1103,7 @@
     canvas.height = H * dpr;
     const ctx = canvas.getContext('2d');
     ctx.scale(dpr, dpr);
+    ctx.translate(0.5, 0.5); // sub-pixel sharpness
 
     const now   = new Date();
     const month = now.getMonth(); // 0-11
