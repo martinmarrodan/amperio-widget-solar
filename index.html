@@ -1085,7 +1085,7 @@
     const midday = (rise + set) / 2;
     const halfWidth = (set - rise) / 2;
     // Sigma ajustado para que la curva arranque y termine suave (≈0% en amanecer/atardecer)
-    const norm = (hour - midday) / (halfWidth * 0.33);
+    const norm = (hour - midday) / (halfWidth * 0.22);
     const gauss = Math.exp(-0.5 * norm * norm);
     return maxKw * mf * gauss;
   }
