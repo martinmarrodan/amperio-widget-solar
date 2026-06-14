@@ -1033,21 +1033,49 @@
                         'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 
   // Hora de salida/puesta del sol aproximada según mes (Buenos Aires)
-  // [sunrise, sunset] en horas decimales
+  // [sunrise, sunset] en horas decimales — fallback si la API falla
   const SUN_TIMES = [
     [6.0, 20.2], [6.5, 19.8], [7.0, 19.2], [7.5, 18.3], [8.0, 17.5], [8.3, 17.2],
     [8.2, 17.4], [7.7, 18.0], [7.0, 18.7], [6.3, 19.3], [5.8, 19.8], [5.7, 20.2]
   ];
 
+  let dynSunRise = null, dynSunSet = null;
+
+  function getSunTimes(month) {
+    if (dynSunRise !== null && dynSunSet !== null) return [dynSunRise, dynSunSet];
+    return SUN_TIMES[month];
+  }
+
+  function formatHour(h) {
+    const hh = Math.floor(h);
+    const mm = Math.round((h - hh) * 60);
+    return hh + ':' + mm.toString().padStart(2, '0');
+  }
+
+  async function fetchSunTimes() {
+    try {
+      const r = await fetch('https://api.sunrise-sunset.org/json?lat=-34.61&lng=-58.38&date=today&formatted=0');
+      const d = await r.json();
+      if (d.status === 'OK') {
+        const toArg = iso => {
+          const dt = new Date(iso);
+          return ((dt.getUTCHours() - 3 + 24) % 24) + dt.getUTCMinutes() / 60;
+        };
+        dynSunRise = toArg(d.results.sunrise);
+        dynSunSet  = toArg(d.results.sunset);
+        drawChart();
+      }
+    } catch(e) {}
+  }
+
   function solarPower(hour, maxKw, month) {
     const mf = MONTH_FACTOR[month];
-    const [rise, set] = SUN_TIMES[month];
+    const [rise, set] = getSunTimes(month);
     if (hour <= rise || hour >= set) return 0;
-    // Curva trapezoidal suavizada con campana gaussiana
     const midday = (rise + set) / 2;
     const halfWidth = (set - rise) / 2;
-    // Combinamos gaussiana (pico bien definido) con factor mensual
-    const norm = (hour - midday) / (halfWidth * 0.85);
+    // Sigma ajustado para que la curva arranque y termine suave (≈0% en amanecer/atardecer)
+    const norm = (hour - midday) / (halfWidth * 0.33);
     const gauss = Math.exp(-0.5 * norm * norm);
     return maxKw * mf * gauss;
   }
@@ -1155,6 +1183,27 @@
     });
 
     // Línea vertical "ahora"
+    // Marcadores de salida y puesta del sol
+    const [sunR, sunS] = getSunTimes(month);
+    [
+      { h: sunR, color: '#f59e0b', label: '↑ ' + formatHour(sunR) },
+      { h: sunS, color: '#94a3b8', label: '↓ ' + formatHour(sunS) }
+    ].forEach(({ h, color, label }) => {
+      const x = xOf(h);
+      ctx.beginPath();
+      ctx.moveTo(x, padT);
+      ctx.lineTo(x, padT + chartH);
+      ctx.strokeStyle = color + '55';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([2, 4]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = color;
+      ctx.font = `600 8px 'Nexa', sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.fillText(label, x, H - 6);
+    });
+
     const nowX = xOf(currentH);
     ctx.beginPath();
     ctx.moveTo(nowX, padT);
@@ -1232,7 +1281,7 @@
 
   function updateFlowDiagram(power, maxKw) {
     const month = new Date().getMonth();
-    const [rise, set] = SUN_TIMES[month];
+    const [rise, set] = getSunTimes(month);
     const noon = (rise + set) / 2;
     const peakKw = solarPower(noon, maxKw, month);
     const ratio  = peakKw > 0 ? power / peakKw : 0;
@@ -1285,6 +1334,7 @@
   window.addEventListener('resize', drawChart);
 
   updateMax();
+  fetchSunTimes();
   setInterval(tickLive, 2000);
   tickLive();
 </script>
