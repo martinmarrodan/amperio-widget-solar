@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Widget Solar – Amperio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --green: #7ecb35;
+      --green-dark: #5a9e20;
+      --green-light: #edf6e0;
+      --green-sage: #d6e8c0;
+      --dark: #0d1a0d;
+      --dark-mid: #1a2e1a;
+      --text: #111111;
+      --gray: #6b7280;
+      --gray-light: #f5f5f3;
+      --white: #ffffff;
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --radius-sm: 10px;
+      --radius-pill: 100px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+      background: #f0f0ec;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 16px;
+    }
+
+    .widget {
+      width: 100%;
+      max-width: 580px;
+    }
+
+    /* ---- LOGO / BRAND ---- */
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .brand svg { width: 28px; height: 28px; }
+
+    .brand-name {
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--text);
+      letter-spacing: -0.5px;
+    }
+
+    /* ---- HERO CARD ---- */
+    .hero-card {
+      background: var(--dark);
+      border-radius: var(--radius-lg);
+      padding: 36px 36px 32px;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .hero-card::before {
+      content: '';
+      position: absolute;
+      width: 280px;
+      height: 280px;
+      background: radial-gradient(circle, rgba(126,203,53,0.35) 0%, transparent 70%);
+      top: -60px;
+      right: -60px;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(126,203,53,0.15);
+      border: 1px solid rgba(126,203,53,0.3);
+      color: var(--green);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      padding: 5px 12px;
+      border-radius: var(--radius-pill);
+      margin-bottom: 16px;
+      text-transform: uppercase;
+    }
+
+    .live-dot {
+      width: 7px;
+      height: 7px;
+      background: var(--green);
+      border-radius: 50%;
+      animation: blink 1.4s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .hero-card h1 {
+      font-size: 38px;
+      font-weight: 900;
+      color: var(--white);
+      line-height: 1.05;
+      letter-spacing: -1.5px;
+      margin-bottom: 4px;
+    }
+
+    .hero-card h1 span { color: var(--green); }
+
+    .hero-card p {
+      color: rgba(255,255,255,0.5);
+      font-size: 14px;
+      margin-top: 10px;
+      font-weight: 500;
+    }
+
+    /* ---- TABS ---- */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      background: rgba(255,255,255,0.08);
+      border-radius: var(--radius-pill);
+      padding: 4px;
+      margin-top: 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 10px 14px;
+      border: none;
+      background: transparent;
+      color: rgba(255,255,255,0.45);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: var(--green);
+      color: var(--dark);
+    }
+
+    /* ---- MAIN CARD ---- */
+    .main-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      margin-bottom: 16px;
+    }
+
+    /* ---- FORM ---- */
+    .section-label {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gray);
+      margin-bottom: 20px;
+    }
+
+    .form-group { margin-bottom: 18px; }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .input-wrap {
+      display: flex;
+      align-items: center;
+      background: var(--gray-light);
+      border-radius: var(--radius-sm);
+      border: 2px solid transparent;
+      transition: border-color 0.2s;
+      overflow: hidden;
+    }
+
+    .input-wrap:focus-within {
+      border-color: var(--green);
+      background: var(--white);
+    }
+
+    .input-wrap input {
+      flex: 1;
+      border: none;
+      outline: none;
+      background: transparent;
+      padding: 13px 16px;
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .input-wrap .unit {
+      padding: 0 14px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--gray);
+      white-space: nowrap;
+    }
+
+    input[type=range] {
+      width: 100%;
+      accent-color: var(--green);
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .range-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--gray);
+      margin-top: 4px;
+    }
+
+    .select-wrap {
+      position: relative;
+    }
+
+    .select-wrap select {
+      width: 100%;
+      appearance: none;
+      background: var(--gray-light);
+      border: 2px solid transparent;
+      border-radius: var(--radius-sm);
+      padding: 13px 40px 13px 16px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .select-wrap select:focus { border-color: var(--green); background: var(--white); }
+
+    .select-wrap::after {
+      content: '▾';
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray);
+      pointer-events: none;
+    }
+
+    /* ---- BTN ---- */
+    .btn {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: var(--radius-pill);
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 8px;
+      letter-spacing: -0.2px;
+    }
+
+    .btn-primary {
+      background: var(--green);
+      color: var(--dark);
+    }
+
+    .btn-primary:hover { background: var(--green-dark); color: var(--white); }
+    .btn-primary:active { transform: scale(0.98); }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid var(--text);
+      color: var(--text);
+    }
+
+    .btn-outline:hover { background: var(--text); color: var(--white); }
+
+    /* ---- RESULTADO ---- */
+    .result-hidden { display: none; }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .result-chip {
+      background: var(--green-light);
+      border-radius: var(--radius-md);
+      padding: 18px 16px;
+      text-align: center;
+    }
+
+    .result-chip .val {
+      font-size: 26px;
+      font-weight: 900;
+      color: var(--text);
+      letter-spacing: -1px;
+      line-height: 1;
+    }
+
+    .result-chip .val em {
+      font-style: normal;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--gray);
+      letter-spacing: 0;
+    }
+
+    .result-chip .lbl {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--gray);
+      margin-top: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .result-chip.dark {
+      background: var(--dark);
+      grid-column: 1 / -1;
+    }
+
+    .result-chip.dark .val { color: var(--green); }
+    .result-chip.dark .lbl { color: rgba(255,255,255,0.45); }
+
+    .cta-btn {
+      display: block;
+      text-align: center;
+      margin-top: 12px;
+      padding: 15px;
+      background: var(--dark);
+      color: var(--white);
+      border-radius: var(--radius-pill);
+      font-family: inherit;
+      font-weight: 800;
+      font-size: 14px;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .cta-btn span { color: var(--green); }
+    .cta-btn:hover { background: var(--dark-mid); }
+
+    /* ---- LIVE PANEL ---- */
+    .live-main {
+      text-align: center;
+      padding: 16px 0 24px;
+    }
+
+    .live-kw-big {
+      font-size: 64px;
+      font-weight: 900;
+      color: var(--text);
+      letter-spacing: -3px;
+      line-height: 1;
+    }
+
+    .live-kw-big em {
+      font-style: normal;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--gray);
+      letter-spacing: 0;
+    }
+
+    .live-sublabel {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gray);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 6px;
+    }
+
+    .power-track {
+      background: var(--gray-light);
+      border-radius: var(--radius-pill);
+      height: 8px;
+      margin: 20px 0 6px;
+      overflow: hidden;
+    }
+
+    .power-fill {
+      height: 100%;
+      border-radius: var(--radius-pill);
+      background: linear-gradient(90deg, var(--green-dark), var(--green));
+      transition: width 1s cubic-bezier(.4,0,.2,1);
+    }
+
+    .power-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--gray);
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .stat-chip {
+      background: var(--green-light);
+      border-radius: var(--radius-md);
+      padding: 16px 10px;
+      text-align: center;
+    }
+
+    .stat-chip .s-icon { font-size: 18px; margin-bottom: 4px; }
+
+    .stat-chip .s-val {
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--text);
+      letter-spacing: -0.5px;
+    }
+
+    .stat-chip .s-lbl {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--gray);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-top: 2px;
+    }
+
+    .live-config {
+      padding-top: 20px;
+      border-top: 1px solid var(--gray-light);
+      margin-top: 20px;
+    }
+
+    /* ---- CHART ---- */
+    .chart-wrap {
+      margin-top: 20px;
+      background: var(--gray-light);
+      border-radius: var(--radius-md);
+      padding: 16px 16px 12px;
+    }
+
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .chart-title {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--gray);
+    }
+
+    .chart-meta {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--gray);
+    }
+
+    canvas#solar-chart {
+      width: 100%;
+      height: 140px;
+      display: block;
+    }
+
+    /* ---- FOOTER CARD ---- */
+    .footer-card {
+      background: var(--dark);
+      border-radius: var(--radius-lg);
+      padding: 24px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .footer-card::before {
+      content: '';
+      position: absolute;
+      width: 180px;
+      height: 180px;
+      background: radial-gradient(circle, rgba(126,203,53,0.2) 0%, transparent 70%);
+      bottom: -50px;
+      right: -20px;
+      border-radius: 50%;
+    }
+
+    .footer-card .f-text {
+      font-size: 13px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.5);
+    }
+
+    .footer-card .f-link {
+      color: var(--green);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .footer-card .f-link:hover { text-decoration: underline; }
+
+    /* ---- PANEL VISIBILITY ---- */
+    .panel { display: none; }
+    .panel.active { display: block; }
+  </style>
+</head>
+<body>
+
+<div class="widget">
+
+  <!-- Brand -->
+  <div class="brand">
+    <svg viewBox="0 0 28 28" fill="none">
+      <circle cx="14" cy="14" r="14" fill="#7ecb35"/>
+      <path d="M16 4L8 16h7l-3 8 9-13h-7l2-7z" fill="white" stroke="white" stroke-width="0.5" stroke-linejoin="round"/>
+    </svg>
+    <span class="brand-name">amperio</span>
+  </div>
+
+  <!-- Hero card (dark) -->
+  <div class="hero-card">
+    <div class="hero-tag">
+      <div class="live-dot"></div>
+      Energía Solar
+    </div>
+
+    <h1>Generación<br><span>solar</span></h1>
+    <p>Calculá tu sistema y monitoreá en tiempo real</p>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('estimador')">Estimador de paneles</button>
+      <button class="tab-btn" onclick="switchTab('live')">Generación en vivo</button>
+    </div>
+  </div>
+
+  <!-- Main content card -->
+  <div class="main-card">
+
+    <!-- Estimador -->
+    <div class="panel active" id="panel-estimador">
+      <p class="section-label">Calculá tu sistema</p>
+
+      <div class="form-group">
+        <label>¿Cuál es tu consumo mensual?</label>
+        <div class="input-wrap">
+          <input type="number" id="consumo" value="350" min="50" max="3000" oninput="syncSlider()" />
+          <span class="unit">kWh / mes</span>
+        </div>
+        <input type="range" id="consumo-slider" min="50" max="3000" value="350" oninput="syncInput()" />
+        <div class="range-labels"><span>50 kWh</span><span>3.000 kWh</span></div>
+      </div>
+
+      <div class="form-group">
+        <label>Provincia / zona solar</label>
+        <div class="select-wrap">
+          <select id="zona">
+            <option value="1.0">Buenos Aires</option>
+            <option value="1.1">CABA</option>
+            <option value="1.15">Córdoba</option>
+            <option value="1.2">Mendoza</option>
+            <option value="1.25">Salta / Jujuy</option>
+            <option value="1.3">San Luis / La Rioja</option>
+            <option value="0.85">Patagonia</option>
+            <option value="0.8">Tierra del Fuego</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Tipo de instalación</label>
+        <div class="select-wrap">
+          <select id="tipo">
+            <option value="residencial">Residencial</option>
+            <option value="comercial">Comercial / Industrial</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" onclick="calcular()">Calculá tu sistema solar</button>
+
+      <div id="resultado" class="result-hidden">
+        <div class="result-grid">
+          <div class="result-chip">
+            <div class="val" id="res-paneles">–</div>
+            <div class="lbl">Paneles</div>
+          </div>
+          <div class="result-chip">
+            <div class="val" id="res-kw">–</div>
+            <div class="lbl">Potencia</div>
+          </div>
+          <div class="result-chip">
+            <div class="val" id="res-ahorro">–</div>
+            <div class="lbl">Ahorro mensual est.</div>
+          </div>
+          <div class="result-chip">
+            <div class="val" id="res-co2">– <em>kg</em></div>
+            <div class="lbl">CO₂ evitado / año</div>
+          </div>
+          <div class="result-chip dark">
+            <div class="val" id="res-retorno">–</div>
+            <div class="lbl">Retorno de inversión estimado</div>
+          </div>
+        </div>
+
+        <a href="https://amperio.com.ar/site/#contacto" class="cta-btn" target="_blank">
+          Solicitá tu presupuesto <span>→</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Live -->
+    <div class="panel" id="panel-live">
+      <p class="section-label">Simulación en tiempo real</p>
+
+      <div class="live-config">
+        <label style="font-size:13px;font-weight:700;color:var(--text);display:block;margin-bottom:8px">Paneles instalados</label>
+        <div class="input-wrap" style="max-width:180px">
+          <input type="number" id="live-paneles" value="8" min="1" max="200" oninput="updateMax()" />
+          <span class="unit">paneles</span>
+        </div>
+      </div>
+
+      <div class="live-main">
+        <div class="live-kw-big" id="live-kw-val">– <em>kW</em></div>
+        <div class="live-sublabel">generando ahora</div>
+        <div class="power-track">
+          <div class="power-fill" id="power-fill" style="width:0%"></div>
+        </div>
+        <div class="power-labels">
+          <span>0 kW</span>
+          <span id="bar-max-label">máx. – kW</span>
+        </div>
+      </div>
+
+      <!-- Curve chart -->
+      <div class="chart-wrap">
+        <div class="chart-header">
+          <span class="chart-title">Curva de generación diaria</span>
+          <span class="chart-meta" id="chart-month-label">–</span>
+        </div>
+        <canvas id="solar-chart"></canvas>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-chip">
+          <div class="s-icon">⚡</div>
+          <div class="s-val" id="stat-hoy">0.00</div>
+          <div class="s-lbl">kWh hoy</div>
+        </div>
+        <div class="stat-chip">
+          <div class="s-icon">🌿</div>
+          <div class="s-val" id="stat-co2">0.00</div>
+          <div class="s-lbl">kg CO₂ evitado</div>
+        </div>
+        <div class="stat-chip">
+          <div class="s-icon">🌳</div>
+          <div class="s-val" id="stat-arb">0</div>
+          <div class="s-lbl">árboles equiv.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer card -->
+  <div class="footer-card">
+    <span class="f-text">©2026 AMPERIO</span>
+    <a href="https://amperio.com.ar/site/" class="f-link" target="_blank">amperio.com.ar →</a>
+  </div>
+
+</div>
+
+<script>
+  // -- Tabs
+  function switchTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach((b, i) =>
+      b.classList.toggle('active', (tab === 'estimador' && i === 0) || (tab === 'live' && i === 1))
+    );
+    document.getElementById('panel-estimador').classList.toggle('active', tab === 'estimador');
+    document.getElementById('panel-live').classList.toggle('active', tab === 'live');
+    if (tab === 'live') drawChart();
+  }
+
+  // -- Estimador
+  function syncSlider() {
+    const v = Math.min(3000, Math.max(50, parseInt(document.getElementById('consumo').value) || 350));
+    document.getElementById('consumo-slider').value = v;
+  }
+  function syncInput() {
+    document.getElementById('consumo').value = document.getElementById('consumo-slider').value;
+  }
+
+  function calcular() {
+    const consumo = parseFloat(document.getElementById('consumo').value) || 350;
+    const factor = parseFloat(document.getElementById('zona').value);
+    const hps = 4.5 * factor;
+    const kwPorPanel = 0.45 * hps * 30 * 0.80;
+    const paneles = Math.ceil(consumo / kwPorPanel);
+    const potenciaKw = (paneles * 0.45).toFixed(1);
+    const ahorroARS = Math.round(consumo * 0.85 * 120).toLocaleString('es-AR');
+    const co2Anual = Math.round(consumo * 0.85 * 12 * 0.4);
+    const costoUSD = paneles * 0.45 * 1200;
+    const ahorroUSD = consumo * 0.85 * 12 * 0.07;
+    const retornoAnios = (costoUSD / ahorroUSD).toFixed(1);
+
+    document.getElementById('res-paneles').textContent = paneles;
+    document.getElementById('res-kw').innerHTML = potenciaKw + ' <em>kW</em>';
+    document.getElementById('res-ahorro').innerHTML = '$' + ahorroARS;
+    document.getElementById('res-co2').innerHTML = co2Anual + ' <em>kg</em>';
+    document.getElementById('res-retorno').innerHTML = (costoUSD / ahorroUSD).toFixed(1) + ' <em>años</em>';
+
+    const el = document.getElementById('resultado');
+    el.classList.remove('result-hidden');
+    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  // -- Solar curve model
+  // Factor de irradiación mensual para Argentina (hemisferio sur)
+  // Índice 0=ene … 11=dic. Verano (dic/ene) más alto, invierno (jun/jul) más bajo.
+  const MONTH_FACTOR = [1.20, 1.15, 1.05, 0.90, 0.78, 0.70, 0.72, 0.80, 0.92, 1.05, 1.13, 1.20];
+  const MONTH_NAMES  = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
+                        'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+  // Hora de salida/puesta del sol aproximada según mes (Buenos Aires)
+  // [sunrise, sunset] en horas decimales
+  const SUN_TIMES = [
+    [6.0, 20.2], [6.5, 19.8], [7.0, 19.2], [7.5, 18.3], [8.0, 17.5], [8.3, 17.2],
+    [8.2, 17.4], [7.7, 18.0], [7.0, 18.7], [6.3, 19.3], [5.8, 19.8], [5.7, 20.2]
+  ];
+
+  function solarPower(hour, maxKw, month) {
+    const mf = MONTH_FACTOR[month];
+    const [rise, set] = SUN_TIMES[month];
+    if (hour <= rise || hour >= set) return 0;
+    // Curva trapezoidal suavizada con campana gaussiana
+    const midday = (rise + set) / 2;
+    const halfWidth = (set - rise) / 2;
+    // Combinamos gaussiana (pico bien definido) con factor mensual
+    const norm = (hour - midday) / (halfWidth * 0.85);
+    const gauss = Math.exp(-0.5 * norm * norm);
+    return maxKw * mf * gauss;
+  }
+
+  // -- Chart
+  const CHART_STEPS = 200; // puntos en el eje X
+
+  function drawChart() {
+    const canvas = document.getElementById('solar-chart');
+    if (!canvas) return;
+    const dpr = window.devicePixelRatio || 1;
+    const W = canvas.offsetWidth;
+    const H = canvas.offsetHeight || 140;
+    canvas.width  = W * dpr;
+    canvas.height = H * dpr;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+
+    const now   = new Date();
+    const month = now.getMonth(); // 0-11
+    const maxKw = getMaxKw();
+    const currentH = now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600;
+
+    document.getElementById('chart-month-label').textContent = MONTH_NAMES[month];
+
+    // Padding interno
+    const padL = 36, padR = 12, padT = 12, padB = 28;
+    const chartW = W - padL - padR;
+    const chartH = H - padT - padB;
+
+    // Escala X: 0-24h → chartW
+    const xOf = h => padL + (h / 24) * chartW;
+    // Escala Y: 0-maxKw → chartH (invertido)
+    const peakKw = maxKw * Math.max(...MONTH_FACTOR);
+    const yOf = kw => padT + chartH - (kw / peakKw) * chartH;
+
+    // Construir puntos de la curva
+    const pts = [];
+    for (let i = 0; i <= CHART_STEPS; i++) {
+      const h = (i / CHART_STEPS) * 24;
+      pts.push({ x: xOf(h), y: yOf(solarPower(h, maxKw, month)) });
+    }
+
+    // Fondo transparente (ya tiene el bg del .chart-wrap)
+    ctx.clearRect(0, 0, W, H);
+
+    // Área rellena bajo la curva
+    const grad = ctx.createLinearGradient(0, padT, 0, padT + chartH);
+    grad.addColorStop(0, 'rgba(126,203,53,0.35)');
+    grad.addColorStop(1, 'rgba(126,203,53,0.02)');
+
+    ctx.beginPath();
+    ctx.moveTo(pts[0].x, padT + chartH);
+    pts.forEach(p => ctx.lineTo(p.x, p.y));
+    ctx.lineTo(pts[pts.length - 1].x, padT + chartH);
+    ctx.closePath();
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    // Línea de la curva
+    ctx.beginPath();
+    ctx.moveTo(pts[0].x, pts[0].y);
+    for (let i = 1; i < pts.length; i++) {
+      const prev = pts[i - 1], curr = pts[i];
+      const cpx = (prev.x + curr.x) / 2;
+      ctx.bezierCurveTo(cpx, prev.y, cpx, curr.y, curr.x, curr.y);
+    }
+    ctx.strokeStyle = '#7ecb35';
+    ctx.lineWidth = 2.5;
+    ctx.lineJoin = 'round';
+    ctx.stroke();
+
+    // Eje X — horas
+    ctx.fillStyle = '#9ca3af';
+    ctx.font = `600 10px 'Plus Jakarta Sans', sans-serif`;
+    ctx.textAlign = 'center';
+    [0, 6, 12, 18, 24].forEach(h => {
+      const x = xOf(h);
+      ctx.fillText(h === 24 ? '24h' : h + 'h', x, H - 6);
+      // tick
+      ctx.beginPath();
+      ctx.moveTo(x, padT + chartH);
+      ctx.lineTo(x, padT + chartH + 4);
+      ctx.strokeStyle = '#e5e7eb';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    });
+
+    // Líneas guía Y (0%, 50%, 100%)
+    [0, 0.5, 1].forEach(pct => {
+      const y = padT + chartH - pct * chartH;
+      ctx.beginPath();
+      ctx.moveTo(padL, y);
+      ctx.lineTo(padL + chartW, y);
+      ctx.strokeStyle = 'rgba(0,0,0,0.06)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 4]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      // label kW
+      ctx.fillStyle = '#9ca3af';
+      ctx.textAlign = 'right';
+      ctx.font = `600 9px 'Plus Jakarta Sans', sans-serif`;
+      ctx.fillText((peakKw * pct).toFixed(1), padL - 4, y + 3);
+    });
+
+    // Línea vertical "ahora"
+    const nowX = xOf(currentH);
+    ctx.beginPath();
+    ctx.moveTo(nowX, padT);
+    ctx.lineTo(nowX, padT + chartH);
+    ctx.strokeStyle = 'rgba(17,17,17,0.25)';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([3, 3]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Punto en la curva en hora actual
+    const nowKw = solarPower(currentH, maxKw, month);
+    const nowY  = yOf(nowKw);
+    // Halo
+    ctx.beginPath();
+    ctx.arc(nowX, nowY, 7, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(126,203,53,0.25)';
+    ctx.fill();
+    // Punto
+    ctx.beginPath();
+    ctx.arc(nowX, nowY, 4, 0, Math.PI * 2);
+    ctx.fillStyle = '#7ecb35';
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Label encima del punto
+    if (nowKw > 0.01) {
+      const label = nowKw.toFixed(2) + ' kW';
+      const lx = Math.min(nowX, padL + chartW - 40);
+      ctx.fillStyle = '#111';
+      ctx.font = `700 10px 'Plus Jakarta Sans', sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.fillText(label, lx, Math.max(nowY - 10, padT + 10));
+    }
+  }
+
+  // -- Live simulation
+  const PANEL_KW = 0.6;
+  let energyToday = 0;
+
+  function getMaxKw() {
+    return (parseInt(document.getElementById('live-paneles').value) || 8) * PANEL_KW;
+  }
+
+  function updateMax() {
+    document.getElementById('bar-max-label').textContent = 'máx. ' + getMaxKw().toFixed(1) + ' kW';
+  }
+
+  function getLivePower() {
+    const now = new Date();
+    const h = now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600;
+    const month = now.getMonth();
+    const base = solarPower(h, getMaxKw(), month);
+    // Pequeño ruido para simular nubes
+    const noise = base > 0 ? (0.92 + Math.random() * 0.16) : 0;
+    return base * noise;
+  }
+
+  function tickLive() {
+    const power = getLivePower();
+    const max   = getMaxKw();
+    energyToday += power * (2 / 3600);
+
+    document.getElementById('live-kw-val').innerHTML = power.toFixed(2) + ' <em>kW</em>';
+    document.getElementById('power-fill').style.width = (max > 0 ? Math.min(100, power / max * 100) : 0) + '%';
+    document.getElementById('stat-hoy').textContent = energyToday.toFixed(2);
+    document.getElementById('stat-co2').textContent = (energyToday * 0.4).toFixed(2);
+    document.getElementById('stat-arb').textContent = (energyToday * 0.4 / 21.7).toFixed(3);
+    updateMax();
+    drawChart();
+  }
+
+  // Redibujar si cambia el tamaño
+  window.addEventListener('resize', drawChart);
+
+  updateMax();
+  setInterval(tickLive, 2000);
+  tickLive();
+</script>
+
+</body>
+</html>
