@@ -581,32 +581,23 @@
 
     /* Líneas base guía */
     .base-line {
-      stroke: #e5e7eb;
-      stroke-width: 2;
+      stroke: #e8e8e4;
+      stroke-width: 1.5;
     }
 
-    /* Segmentos animados */
+    /* Segmentos activos coloreados */
     .flow-seg {
-      stroke-width: 3;
+      stroke-width: 1.5;
       stroke-linecap: round;
-      stroke-dasharray: 6 10;
       opacity: 0;
       transition: opacity 0.6s;
     }
 
-    .flow-seg.active {
-      opacity: 1;
-      animation: flowDots 0.8s linear infinite;
-    }
+    .flow-seg.active { opacity: 1; }
 
     .seg-solar { stroke: #7ecb35; }
     .seg-house { stroke: #7ecb35; }
     .seg-grid  { stroke: #94a3b8; }
-
-    @keyframes flowDots {
-      from { stroke-dashoffset: 32; }
-      to   { stroke-dashoffset:  0; }
-    }
 
     /* Nodo central activo */
     #junction-dot.active { fill: #7ecb35; }
@@ -860,38 +851,47 @@
 
           <svg class="flow-svg" viewBox="0 0 480 300" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
             <defs>
-              <marker id="arr-solar" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
-                <path d="M 0 0 L 8 4 L 0 8 Z" fill="#7ecb35"/>
-              </marker>
-              <marker id="arr-grid" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
-                <path d="M 0 0 L 8 4 L 0 8 Z" fill="#94a3b8"/>
-              </marker>
-              <marker id="arr-house" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
-                <path d="M 0 0 L 8 4 L 0 8 Z" fill="#7ecb35"/>
-              </marker>
+              <!-- Paths para animateMotion -->
+              <path id="def-solar" d="M 240 88 L 240 234"/>
+              <path id="def-house" d="M 237 240 L 148 240"/>
+              <path id="def-grid"  d="M 332 240 L 243 240"/>
             </defs>
 
-            <!-- Base lines (guías siempre visibles) -->
-            <line class="base-line" x1="240" y1="90" x2="240" y2="240"/>
-            <line class="base-line" x1="145" y1="240" x2="335" y2="240"/>
+            <!-- Líneas base (guía siempre visible) -->
+            <line class="base-line" x1="240" y1="88" x2="240" y2="240"/>
+            <line class="base-line" x1="148" y1="240" x2="332" y2="240"/>
 
-            <!-- Segmento: Paneles → Nodo (vertical, baja) -->
-            <line id="path-solar" class="flow-seg seg-solar"
-                  x1="240" y1="90" x2="240" y2="236"
-                  marker-end="url(#arr-solar)"/>
+            <!-- Líneas activas coloreadas -->
+            <line id="path-solar" class="flow-seg seg-solar" x1="240" y1="88"  x2="240" y2="236"/>
+            <line id="path-house" class="flow-seg seg-house" x1="237" y1="240" x2="148" y2="240"/>
+            <line id="path-grid"  class="flow-seg seg-grid"  x1="332" y1="240" x2="243" y2="240"/>
 
-            <!-- Segmento: Nodo → Casa (horizontal, va a la izquierda) -->
-            <line id="path-house" class="flow-seg seg-house"
-                  x1="238" y1="240" x2="148" y2="240"
-                  marker-end="url(#arr-house)"/>
+            <!-- Flechita solar (baja desde paneles) -->
+            <g id="arr-solar" style="visibility:hidden">
+              <polygon points="-3.5,-2 3.5,0 -3.5,2" fill="#7ecb35"/>
+              <animateMotion dur="1.6s" repeatCount="indefinite" rotate="auto">
+                <mpath href="#def-solar"/>
+              </animateMotion>
+            </g>
 
-            <!-- Segmento: Red → Nodo (horizontal, va a la izquierda) -->
-            <line id="path-grid" class="flow-seg seg-grid"
-                  x1="332" y1="240" x2="244" y2="240"
-                  marker-end="url(#arr-grid)"/>
+            <!-- Flechita casa (va hacia la casa) -->
+            <g id="arr-house" style="visibility:hidden">
+              <polygon points="-3.5,-2 3.5,0 -3.5,2" fill="#7ecb35"/>
+              <animateMotion dur="1.4s" repeatCount="indefinite" rotate="auto">
+                <mpath href="#def-house"/>
+              </animateMotion>
+            </g>
+
+            <!-- Flechita red (viene desde la red) -->
+            <g id="arr-grid" style="visibility:hidden">
+              <polygon points="-3.5,-2 3.5,0 -3.5,2" fill="#94a3b8"/>
+              <animateMotion dur="1.4s" repeatCount="indefinite" rotate="auto">
+                <mpath href="#def-grid"/>
+              </animateMotion>
+            </g>
 
             <!-- Nodo central -->
-            <circle cx="240" cy="240" r="5" fill="#e5e7eb" id="junction-dot"/>
+            <circle cx="240" cy="240" r="4" fill="#e5e7eb" id="junction-dot"/>
           </svg>
 
           <!-- Paneles (arriba centro) -->
@@ -1241,14 +1241,21 @@
     const gridOn  = state !== 'solar';
     const houseOn = solarOn || gridOn;
 
-    document.getElementById('path-solar').classList.toggle('active', solarOn);
-    document.getElementById('path-grid').classList.toggle('active',  gridOn);
-    document.getElementById('path-house').classList.toggle('active', houseOn);
+    const setActive = (segId, arrId, on) => {
+      document.getElementById(segId).classList.toggle('active', on);
+      document.getElementById(arrId).style.visibility = on ? 'visible' : 'hidden';
+    };
+
+    setActive('path-solar', 'arr-solar', solarOn);
+    setActive('path-grid',  'arr-grid',  gridOn);
+    setActive('path-house', 'arr-house', houseOn);
     document.getElementById('junction-dot').classList.toggle('active', houseOn);
 
-    // Segmento casa hereda color según fuente dominante
     document.getElementById('path-house').style.stroke =
       state === 'night' ? '#94a3b8' : '#7ecb35';
+    document.getElementById('arr-house').querySelector('polygon').setAttribute(
+      'fill', state === 'night' ? '#94a3b8' : '#7ecb35'
+    );
 
     document.getElementById('casa-img').src = 'grafico_solar/casa_con_luz.png';
     document.getElementById('flow-kw-badge').textContent = power.toFixed(2) + ' kW';
