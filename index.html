@@ -6,18 +6,18 @@
   <title>Widget Solar – Amperio</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&display=swap" rel="stylesheet" />
   <style>
     :root {
       --green: #7ecb35;
       --green-dark: #5a9e20;
       --green-light: #edf6e0;
-      --green-sage: #d6e8c0;
-      --dark: #0d1a0d;
-      --dark-mid: #1a2e1a;
+      --green-sage: #cdd9b5;
+      --dark: #0a1508;
+      --dark-mid: #142010;
       --text: #111111;
       --gray: #6b7280;
-      --gray-light: #f5f5f3;
+      --gray-light: #f4f4f0;
       --white: #ffffff;
       --radius-lg: 24px;
       --radius-md: 16px;
@@ -28,8 +28,8 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
-      background: #f0f0ec;
+      font-family: 'Bricolage Grotesque', system-ui, sans-serif;
+      background: #f5f5f1;
       min-height: 100vh;
       display: flex;
       align-items: center;
@@ -170,10 +170,10 @@
     /* ---- FORM ---- */
     .section-label {
       font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 0.1em;
+      font-weight: 700;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: var(--gray);
+      color: var(--green);
       margin-bottom: 20px;
     }
 
@@ -845,7 +845,7 @@
 
     // Eje X — horas
     ctx.fillStyle = '#9ca3af';
-    ctx.font = `600 10px 'Plus Jakarta Sans', sans-serif`;
+    ctx.font = `600 10px 'Bricolage Grotesque', sans-serif`;
     ctx.textAlign = 'center';
     [0, 6, 12, 18, 24].forEach(h => {
       const x = xOf(h);
@@ -873,7 +873,7 @@
       // label kW
       ctx.fillStyle = '#9ca3af';
       ctx.textAlign = 'right';
-      ctx.font = `600 9px 'Plus Jakarta Sans', sans-serif`;
+      ctx.font = `600 9px 'Bricolage Grotesque', sans-serif`;
       ctx.fillText((peakKw * pct).toFixed(1), padL - 4, y + 3);
     });
 
@@ -910,7 +910,7 @@
       const label = nowKw.toFixed(2) + ' kW';
       const lx = Math.min(nowX, padL + chartW - 40);
       ctx.fillStyle = '#111';
-      ctx.font = `700 10px 'Plus Jakarta Sans', sans-serif`;
+      ctx.font = `700 10px 'Bricolage Grotesque', sans-serif`;
       ctx.textAlign = 'center';
       ctx.fillText(label, lx, Math.max(nowY - 10, padT + 10));
     }
