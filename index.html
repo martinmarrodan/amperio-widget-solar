@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Widget Solar – Amperio</title>
   <style>
-    @font-face { font-family: 'Nexa'; src: url('fonts/NexaRegular.otf'); font-weight: 415; }
+    @font-face { font-family: 'Nexa'; src: url('fonts/NexaRegular.otf'); font-weight: 430; }
     @font-face { font-family: 'Nexa'; src: url('fonts/Nexa-Bold.otf');   font-weight: 600 700; }
     @font-face { font-family: 'Nexa'; src: url('fonts/NexaHeavy.otf');   font-weight: 800; }
     @font-face { font-family: 'Nexa'; src: url('fonts/Nexa-XBold.otf');  font-weight: 850; }
@@ -619,7 +619,7 @@
     .fn-casa { left: 1%; top: 58%; width: 20%; }
 
     /* Red: abajo derecha */
-    .fn-red { right: 5%; top: 58%; width: 20%; }
+    .fn-red { right: 1%; top: 58%; width: 20%; }
 
     .flow-lbl {
       font-size: 9px;
@@ -854,17 +854,17 @@
               <!-- Paths para animateMotion -->
               <path id="def-solar" d="M 240 88 L 240 209"/>
               <path id="def-house" d="M 237 215 L 93 215"/>
-              <path id="def-grid"  d="M 415 215 L 243 215"/>
+              <path id="def-grid"  d="M 430 215 L 243 215"/>
             </defs>
 
             <!-- Líneas base (guía siempre visible) -->
             <line class="base-line" x1="240" y1="88" x2="240" y2="215"/>
-            <line class="base-line" x1="93" y1="215" x2="415" y2="215"/>
+            <line class="base-line" x1="93" y1="215" x2="430" y2="215"/>
 
             <!-- Líneas activas coloreadas -->
             <line id="path-solar" class="flow-seg seg-solar" x1="240" y1="88"  x2="240" y2="211"/>
             <line id="path-house" class="flow-seg seg-house" x1="237" y1="215" x2="93" y2="215"/>
-            <line id="path-grid"  class="flow-seg seg-grid"  x1="415" y1="215" x2="243" y2="215"/>
+            <line id="path-grid"  class="flow-seg seg-grid"  x1="430" y1="215" x2="243" y2="215"/>
 
             <!-- Flechita solar (baja desde paneles) -->
             <g id="arr-solar" style="visibility:hidden">
