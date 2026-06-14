@@ -1154,7 +1154,7 @@
       ctx.bezierCurveTo(cpx, prev.y, cpx, curr.y, curr.x, curr.y);
     }
     ctx.strokeStyle = '#7ecb35';
-    ctx.lineWidth = 2.5;
+    ctx.lineWidth = 1;
     ctx.lineJoin = 'round';
     ctx.stroke();
 
@@ -1211,7 +1211,7 @@
       ctx.fillStyle = color;
       ctx.font = `600 8px 'Nexa', sans-serif`;
       ctx.textAlign = 'center';
-      ctx.fillText(label, x, H - 6);
+      ctx.fillText(label, x, padT + chartH - 5);
     });
 
     const nowX = xOf(currentH);
