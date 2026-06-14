@@ -4,9 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Widget Solar – Amperio</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&display=swap" rel="stylesheet" />
+  <style>
+    @font-face { font-family: 'Nexa'; src: url('fonts/NexaRegular.otf'); font-weight: 400; }
+    @font-face { font-family: 'Nexa'; src: url('fonts/Nexa-Bold.otf');   font-weight: 600 700; }
+    @font-face { font-family: 'Nexa'; src: url('fonts/NexaHeavy.otf');   font-weight: 800; }
+    @font-face { font-family: 'Nexa'; src: url('fonts/Nexa-XBold.otf');  font-weight: 850; }
+    @font-face { font-family: 'Nexa'; src: url('fonts/NexaBlack.otf');   font-weight: 900; }
+  </style>
   <style>
     :root {
       --green: #7ecb35;
@@ -28,7 +32,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: 'Bricolage Grotesque', system-ui, sans-serif;
+      font-family: 'Nexa', system-ui, sans-serif;
       background: #f5f5f1;
       min-height: 100vh;
       display: flex;
@@ -845,7 +849,7 @@
 
     // Eje X — horas
     ctx.fillStyle = '#9ca3af';
-    ctx.font = `600 10px 'Bricolage Grotesque', sans-serif`;
+    ctx.font = `600 10px 'Nexa', sans-serif`;
     ctx.textAlign = 'center';
     [0, 6, 12, 18, 24].forEach(h => {
       const x = xOf(h);
@@ -873,7 +877,7 @@
       // label kW
       ctx.fillStyle = '#9ca3af';
       ctx.textAlign = 'right';
-      ctx.font = `600 9px 'Bricolage Grotesque', sans-serif`;
+      ctx.font = `600 9px 'Nexa', sans-serif`;
       ctx.fillText((peakKw * pct).toFixed(1), padL - 4, y + 3);
     });
 
@@ -910,7 +914,7 @@
       const label = nowKw.toFixed(2) + ' kW';
       const lx = Math.min(nowX, padL + chartW - 40);
       ctx.fillStyle = '#111';
-      ctx.font = `700 10px 'Bricolage Grotesque', sans-serif`;
+      ctx.font = `700 10px 'Nexa', sans-serif`;
       ctx.textAlign = 'center';
       ctx.fillText(label, lx, Math.max(nowY - 10, padT + 10));
     }
