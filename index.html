@@ -95,6 +95,13 @@
       text-transform: uppercase;
     }
 
+    .hero-header-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
     .live-dot {
       width: 7px;
       height: 7px;
@@ -109,12 +116,14 @@
     }
 
     .hero-title {
-      font-size: 48px;
+      font-size: 36px;
       font-weight: 900;
       color: var(--text);
       line-height: 1.0;
-      letter-spacing: -2px;
+      letter-spacing: -1px;
       margin-bottom: 10px;
+      text-align: center;
+      text-transform: uppercase;
     }
 
     .hero-title span { color: var(--green); }
@@ -124,6 +133,7 @@
       font-size: 14px;
       font-weight: 500;
       margin-bottom: 24px;
+      text-align: center;
     }
 
     /* ---- HERO CARD (solo tabs) ---- */
@@ -565,7 +575,7 @@
     @media (min-width: 720px) {
       .widget { max-width: 960px; }
 
-      .hero-title { font-size: 64px; letter-spacing: -3px; }
+      .hero-title { font-size: 52px; letter-spacing: -2px; }
       .hero-card { padding: 20px 32px; }
       .tabs { max-width: 420px; }
 
@@ -639,12 +649,14 @@
   </div>
 
   <!-- Hero header (fuera de la tarjeta) -->
-  <div class="hero-tag">
-    <div class="live-dot"></div>
-    Energía Solar
+  <div class="hero-header-wrap">
+    <div class="hero-tag">
+      <div class="live-dot"></div>
+      Energía Solar
+    </div>
+    <h1 class="hero-title">Generación<br><span>solar</span></h1>
+    <p class="hero-sub">Calculá tu sistema y monitoreá en tiempo real</p>
   </div>
-  <h1 class="hero-title">Generación<br><span>solar</span></h1>
-  <p class="hero-sub">Calculá tu sistema y monitoreá en tiempo real</p>
 
   <!-- Dark card — solo tabs -->
   <div class="hero-card">
