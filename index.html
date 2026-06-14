@@ -904,7 +904,7 @@
           <!-- Casa (abajo izquierda) -->
           <div class="flow-node fn-casa">
             <img id="casa-img" src="grafico_solar/casa_sin_luz.png" alt="Tu hogar">
-            <span class="flow-lbl">Tu hogar</span>
+            <span class="flow-lbl" id="casa-lbl">Tu hogar</span>
           </div>
 
           <!-- Red eléctrica (abajo derecha) -->
@@ -1014,8 +1014,9 @@
     document.getElementById('res-co2').innerHTML = co2Anual + ' <em>kg</em>';
     document.getElementById('res-retorno').innerHTML = (costoUSD / ahorroUSD).toFixed(1) + ' <em>años</em>';
 
-    // Sincronizar paneles con el tab de monitoreo
+    // Sincronizar paneles y tipo con el tab de monitoreo
     document.getElementById('live-paneles').value = paneles;
+    tipoInstalacion = document.getElementById('tipo').value;
     energyToday = 0;
     updateMax();
 
@@ -1195,6 +1196,7 @@
   // -- Live simulation
   const PANEL_KW = 0.6;
   let energyToday = 0;
+  let tipoInstalacion = 'residencial';
 
   function getMaxKw() {
     return (parseInt(document.getElementById('live-paneles').value) || 8) * PANEL_KW;
@@ -1257,7 +1259,13 @@
       'fill', state === 'night' ? '#94a3b8' : '#7ecb35'
     );
 
-    document.getElementById('casa-img').src = 'grafico_solar/casa_con_luz.png';
+    if (tipoInstalacion === 'comercial') {
+      document.getElementById('casa-img').src = 'grafico_solar/industria.png';
+      document.getElementById('casa-lbl').textContent = 'Tu empresa';
+    } else {
+      document.getElementById('casa-img').src = 'grafico_solar/casa_con_luz.png';
+      document.getElementById('casa-lbl').textContent = 'Tu hogar';
+    }
     document.getElementById('flow-kw-badge').textContent = power.toFixed(2) + ' kW';
 
     const labels = {
