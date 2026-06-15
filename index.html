@@ -477,6 +477,45 @@
     }
     .system-info-bar .sib-val { color: var(--text); }
     .system-info-bar .sib-kwh { color: var(--green-dark); }
+    /* Toggle de red eléctrica */
+    .grid-toggle {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      margin-top: 5px;
+      user-select: none;
+    }
+    .grid-toggle input { display: none; }
+    .grid-toggle-track {
+      position: relative;
+      width: 30px;
+      height: 16px;
+      background: #d1d5db;
+      border-radius: 99px;
+      transition: background 0.2s;
+      flex-shrink: 0;
+    }
+    .grid-toggle input:checked ~ .grid-toggle-track { background: #7ecb35; }
+    .grid-toggle-thumb {
+      position: absolute;
+      width: 12px; height: 12px;
+      background: #fff;
+      border-radius: 50%;
+      top: 2px; left: 2px;
+      transition: left 0.2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+    }
+    .grid-toggle input:checked ~ .grid-toggle-track .grid-toggle-thumb { left: 16px; }
+    .grid-toggle-lbl {
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      color: var(--gray);
+    }
+    .fn-red.grid-off .fn-red img,
+    #red-img.off { opacity: 0.3; }
+
     .sib-paneles-input {
       width: 36px;
       border: none;
@@ -918,6 +957,7 @@
               <path id="def-grid"        d="M 380 233 L 243 233"/>
               <path id="def-batt"        d="M 240 237 L 240 375"/>
               <path id="def-batt-right"  d="M 243 233 L 380 233"/>
+              <path id="def-batt-up"     d="M 240 375 L 240 237"/>
             </defs>
 
             <!-- Líneas base (guía siempre visible) — cruz completa -->
@@ -964,11 +1004,27 @@
               </animateMotion>
             </g>
 
-            <!-- Flechita baterías Off Grid (va hacia la derecha) -->
+            <!-- Flechita baterías Off Grid (carga: va hacia la derecha) -->
             <g id="arr-batt-right" style="visibility:hidden">
               <polygon points="-3.5,-2 3.5,0 -3.5,2" fill="#7ecb35"/>
               <animateMotion dur="1.4s" repeatCount="indefinite" rotate="auto">
                 <mpath href="#def-batt-right"/>
+              </animateMotion>
+            </g>
+
+            <!-- Flechita descarga Off Grid de noche (batería → junction, leftward) -->
+            <g id="arr-batt-right-discharge" style="visibility:hidden">
+              <polygon points="-3.5,-2 3.5,0 -3.5,2" fill="#f59e0b"/>
+              <animateMotion dur="1.8s" repeatCount="indefinite" rotate="auto">
+                <mpath href="#def-grid"/>
+              </animateMotion>
+            </g>
+
+            <!-- Flechita descarga Híbrido de noche (batería → junction, upward) -->
+            <g id="arr-batt-up" style="visibility:hidden">
+              <polygon points="-3.5,-2 3.5,0 -3.5,2" fill="#f59e0b"/>
+              <animateMotion dur="1.8s" repeatCount="indefinite" rotate="auto">
+                <mpath href="#def-batt-up"/>
               </animateMotion>
             </g>
 
@@ -991,8 +1047,13 @@
 
           <!-- Red eléctrica (abajo derecha) -->
           <div class="flow-node fn-red">
-            <img src="grafico_solar/red_electrica.png" alt="Red eléctrica">
+            <img id="red-img" src="grafico_solar/red_electrica.png" alt="Red eléctrica">
             <span class="flow-lbl">Red eléctrica</span>
+            <label class="grid-toggle" title="Cortar / conectar red">
+              <input type="checkbox" id="grid-toggle" checked onchange="onGridToggle()">
+              <span class="grid-toggle-track"><span class="grid-toggle-thumb"></span></span>
+              <span class="grid-toggle-lbl" id="grid-toggle-lbl">ON</span>
+            </label>
           </div>
 
           <!-- Baterías (abajo centro) -->
@@ -1074,20 +1135,31 @@
     applySistemaDiagram();
   }
 
+  function onGridToggle() {
+    const on = document.getElementById('grid-toggle').checked;
+    document.getElementById('red-img').style.opacity = on ? '1' : '0.3';
+    document.getElementById('grid-toggle-lbl').textContent = on ? 'ON' : 'OFF';
+    updateFlowDiagram(getLivePower(), getMaxKw());
+  }
+
   function applySistemaDiagram() {
     const st = (document.getElementById('sistema-tipo')?.value) || 'ongrid';
     const fnBatt = document.querySelector('.fn-batt');
     const fnRed  = document.querySelector('.fn-red');
     const baseBattV = document.getElementById('base-batt-v');
 
+    const gridToggleWrap = document.querySelector('.fn-red .grid-toggle');
+
     if (st === 'ongrid') {
       fnBatt.style.display = 'none';
       fnRed.style.display  = '';
       baseBattV.style.display = 'none';
+      if (gridToggleWrap) gridToggleWrap.style.display = '';
     } else if (st === 'hibrido') {
       fnBatt.style.display = '';
       fnRed.style.display  = '';
       baseBattV.style.display = '';
+      if (gridToggleWrap) gridToggleWrap.style.display = '';
       // Restore battery to bottom-center
       fnBatt.style.left      = '50%';
       fnBatt.style.transform = 'translateX(-50%)';
@@ -1098,6 +1170,7 @@
       fnRed.style.display    = 'none';
       fnBatt.style.display   = '';
       baseBattV.style.display = 'none';
+      if (gridToggleWrap) gridToggleWrap.style.display = 'none'; // sin red en offgrid
       // Move battery to red's position (right side)
       fnBatt.style.right     = '3.5%';
       fnBatt.style.top       = '43.5%';
@@ -1591,46 +1664,87 @@
     const noon = (rise + set) / 2;
     const peakKw = solarPower(noon, maxKw, month);
     const ratio  = peakKw > 0 ? power / peakKw : 0;
-
-    const state = ratio < 0.05 ? 'night' : ratio < 0.55 ? 'mixed' : 'solar';
-
+    const state  = ratio < 0.05 ? 'night' : ratio < 0.55 ? 'mixed' : 'solar';
     const solarOn = state !== 'night';
-    const gridOn  = state !== 'solar';
-    const houseOn = solarOn || gridOn;
+    const gridNeeded = state !== 'solar';
+    const st = (document.getElementById('sistema-tipo')?.value) || 'ongrid';
+    const gridAvail = document.getElementById('grid-toggle')?.checked !== false;
 
-    const setActive = (segId, arrId, on) => {
-      const seg = document.getElementById(segId);
-      const arr = document.getElementById(arrId);
-      if (seg) seg.classList.toggle('active', on);
-      if (arr) arr.style.visibility = on ? 'visible' : 'hidden';
+    // Reset all segments and arrows
+    ['path-solar','path-house','path-grid','path-batt','path-batt-right'].forEach(id => {
+      const el = document.getElementById(id); if (el) el.classList.remove('active');
+    });
+    ['arr-solar','arr-house','arr-grid','arr-batt','arr-batt-up','arr-batt-right','arr-batt-right-discharge'].forEach(id => {
+      const el = document.getElementById(id); if (el) el.style.visibility = 'hidden';
+    });
+
+    const on = (segId, arrId) => {
+      const seg = document.getElementById(segId); if (seg) seg.classList.add('active');
+      const arr = document.getElementById(arrId);  if (arr) arr.style.visibility = 'visible';
     };
 
-    const st = (document.getElementById('sistema-tipo')?.value) || 'ongrid';
-
-    setActive('path-solar', 'arr-solar', solarOn);
-    setActive('path-house', 'arr-house', houseOn);
+    let houseColor = '#7ecb35';
+    let junctionActive = false;
+    let casaLuz = true;
+    let stateText = '–';
 
     if (st === 'ongrid') {
-      setActive('path-grid', 'arr-grid', gridOn);
-      setActive('path-batt', 'arr-batt', false);
-      setActive('path-batt-right', 'arr-batt-right', false);
+      if (!gridAvail) {
+        casaLuz = false;
+        stateText = '⚡ Sin red – sistema apagado';
+      } else {
+        if (solarOn)    on('path-solar', 'arr-solar');
+        if (gridNeeded) on('path-grid',  'arr-grid');
+        on('path-house', 'arr-house');
+        junctionActive = true;
+        houseColor = state === 'night' ? '#94a3b8' : '#7ecb35';
+        stateText = state === 'night' ? '🔌 Energía de la red eléctrica'
+                  : state === 'mixed' ? '☀️ Solar + red combinados'
+                  : '☀️ Solo energía solar';
+      }
     } else if (st === 'hibrido') {
-      setActive('path-grid', 'arr-grid', gridOn);
-      setActive('path-batt', 'arr-batt', solarOn);
-      setActive('path-batt-right', 'arr-batt-right', false);
+      if (!gridAvail) {
+        if (solarOn) {
+          on('path-solar', 'arr-solar');
+          on('path-batt',  'arr-batt');     // carga batería
+          on('path-house', 'arr-house');
+          stateText = '☀️ Solar autónomo – sin red';
+        } else {
+          on('path-batt',  'arr-batt-up'); // descarga batería → arriba
+          on('path-house', 'arr-house');
+          houseColor = '#f59e0b';
+          stateText = '🔋 Baterías – sin red';
+        }
+        junctionActive = true;
+      } else {
+        if (solarOn)    on('path-solar', 'arr-solar');
+        if (gridNeeded) on('path-grid',  'arr-grid');
+        if (solarOn)    on('path-batt',  'arr-batt');
+        on('path-house', 'arr-house');
+        junctionActive = true;
+        houseColor = state === 'night' ? '#94a3b8' : '#7ecb35';
+        stateText = state === 'night' ? '🔌 Energía de la red eléctrica'
+                  : state === 'mixed' ? '☀️ Solar + red combinados'
+                  : '☀️ Solo energía solar';
+      }
     } else if (st === 'offgrid') {
-      setActive('path-grid', 'arr-grid', false);
-      setActive('path-batt', 'arr-batt', false);
-      setActive('path-batt-right', 'arr-batt-right', solarOn);
+      if (solarOn) {
+        on('path-solar',      'arr-solar');
+        on('path-batt-right', 'arr-batt-right');  // carga batería → derecha
+        on('path-house',      'arr-house');
+        stateText = '☀️ Solo energía solar';
+      } else {
+        on('path-batt-right', 'arr-batt-right-discharge'); // descarga batería ← derecha
+        on('path-house',      'arr-house');
+        houseColor = '#f59e0b';
+        stateText = '🔋 Baterías – sin red';
+      }
+      junctionActive = true;
     }
 
-    document.getElementById('junction-dot').classList.toggle('active', houseOn);
-
-    document.getElementById('path-house').style.stroke =
-      state === 'night' ? '#94a3b8' : '#7ecb35';
-    document.getElementById('arr-house').querySelector('polygon').setAttribute(
-      'fill', state === 'night' ? '#94a3b8' : '#7ecb35'
-    );
+    document.getElementById('junction-dot').classList.toggle('active', junctionActive);
+    document.getElementById('path-house').style.stroke = houseColor;
+    document.getElementById('arr-house').querySelector('polygon').setAttribute('fill', houseColor);
 
     const casaNode = document.querySelector('.fn-casa');
     if (tipoInstalacion === 'comercial') {
@@ -1639,19 +1753,15 @@
       casaNode.style.width = '24%';
       casaNode.style.left = '5%';
     } else {
-      document.getElementById('casa-img').src = 'grafico_solar/casa_con_luz.png';
+      document.getElementById('casa-img').src = casaLuz
+        ? 'grafico_solar/casa_con_luz.png'
+        : 'grafico_solar/casa_sin_luz.png';
       document.getElementById('casa-lbl').textContent = 'Tu hogar';
       casaNode.style.width = '20%';
       casaNode.style.left = '5%';
     }
     document.getElementById('flow-kw-badge').textContent = power.toFixed(2) + ' kW';
-
-    const labels = {
-      night: '🔌 Energía de la red eléctrica',
-      mixed: '☀️ Solar + red combinados',
-      solar: '☀️ Solo energía solar'
-    };
-    document.getElementById('flow-state-label').textContent = labels[state];
+    document.getElementById('flow-state-label').textContent = stateText;
   }
 
   // Animación de carga de baterías (cicla los 4 frames)
