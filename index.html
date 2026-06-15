@@ -677,7 +677,11 @@
       gap: 4px;
     }
 
-    .flow-node img { width: 100%; display: block; object-fit: contain; aspect-ratio: 561 / 512; }
+    .flow-node img { width: 100%; display: block; object-fit: contain; }
+    .casa-img-wrap { position: relative; width: 100%; }
+    .casa-img-wrap img { position: absolute; top: 0; left: 0; width: 100%; }
+    .casa-img-wrap #casa-img { position: relative; }
+    #casa-img-noluz { opacity: 0; transition: opacity 0.25s; }
 
     /* Paneles: arriba centro */
     .fn-paneles { left: 50%; transform: translateX(-50%); top: 0; width: 22%; }
@@ -1041,7 +1045,10 @@
 
           <!-- Casa (abajo izquierda) -->
           <div class="flow-node fn-casa">
-            <img id="casa-img" src="grafico_solar/casa_sin_luz.png" alt="Tu hogar">
+            <div class="casa-img-wrap">
+              <img id="casa-img"        src="grafico_solar/casa_con_luz.png" alt="Tu hogar">
+              <img id="casa-img-noluz"  src="grafico_solar/casa_sin_luz.png" alt="" aria-hidden="true">
+            </div>
             <span class="flow-lbl" id="casa-lbl">Tu hogar</span>
           </div>
 
@@ -1753,9 +1760,7 @@
       casaNode.style.width = '24%';
       casaNode.style.left = '5%';
     } else {
-      document.getElementById('casa-img').src = casaLuz
-        ? 'grafico_solar/casa_con_luz.png'
-        : 'grafico_solar/casa_sin_luz.png';
+      document.getElementById('casa-img-noluz').style.opacity = casaLuz ? '0' : '1';
       document.getElementById('casa-lbl').textContent = 'Tu hogar';
       casaNode.style.width = '20%';
       casaNode.style.left = '5%';
@@ -1774,9 +1779,6 @@
 
   // Redibujar si cambia el tamaño
   window.addEventListener('resize', drawChart);
-
-  // Preload house images so src swap is instant
-  ['casa_con_luz','casa_sin_luz'].forEach(n => { new Image().src = 'grafico_solar/' + n + '.png'; });
 
   updateMax();
   // Default system info labels for On Grid / Monofásico
