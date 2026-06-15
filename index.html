@@ -585,7 +585,7 @@
     .flow-inner {
       position: relative;
       width: 100%;
-      padding-bottom: 62.5%; /* proporción 480:300 */
+      padding-bottom: 77.1%; /* proporción 480:370 */
       height: 0;
     }
 
@@ -615,6 +615,7 @@
     .seg-solar { stroke: #7ecb35; }
     .seg-house { stroke: #7ecb35; }
     .seg-grid  { stroke: #94a3b8; }
+    .seg-batt  { stroke: #7ecb35; }
 
     /* Nodo central activo */
     #junction-dot.active { fill: #7ecb35; }
@@ -633,10 +634,13 @@
     .fn-paneles { left: 50%; transform: translateX(-50%); top: 0; width: 22%; }
 
     /* Casa: abajo izquierda */
-    .fn-casa { left: 5%; top: 58%; width: 20%; }
+    .fn-casa { left: 5%; top: 47%; width: 20%; }
 
     /* Red: abajo derecha */
-    .fn-red { right: 1%; top: 58%; width: 20%; }
+    .fn-red { right: 1%; top: 47%; width: 20%; }
+
+    /* Baterías: abajo centro */
+    .fn-batt { left: 50%; transform: translateX(-50%); bottom: 2%; width: 22%; }
 
     .flow-lbl {
       font-size: 9px;
@@ -897,22 +901,24 @@
       <div class="flow-diagram">
         <div class="flow-inner">
 
-          <svg class="flow-svg" viewBox="0 0 480 300" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <svg class="flow-svg" viewBox="0 0 480 370" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
             <defs>
-              <!-- Paths para animateMotion -->
               <path id="def-solar" d="M 240 88 L 240 227"/>
               <path id="def-house" d="M 237 233 L 112 233"/>
               <path id="def-grid"  d="M 393 233 L 243 233"/>
+              <path id="def-batt"  d="M 240 237 L 240 350"/>
             </defs>
 
-            <!-- Líneas base (guía siempre visible) -->
-            <line class="base-line" x1="240" y1="88" x2="240" y2="233"/>
+            <!-- Líneas base (guía siempre visible) — cruz completa -->
+            <line class="base-line" x1="240" y1="88"  x2="240" y2="233"/>
+            <line class="base-line" x1="240" y1="237" x2="240" y2="350"/>
             <line class="base-line" x1="112" y1="233" x2="393" y2="233"/>
 
             <!-- Líneas activas coloreadas -->
             <line id="path-solar" class="flow-seg seg-solar" x1="240" y1="88"  x2="240" y2="229"/>
             <line id="path-house" class="flow-seg seg-house" x1="237" y1="233" x2="112" y2="233"/>
             <line id="path-grid"  class="flow-seg seg-grid"  x1="393" y1="233" x2="243" y2="233"/>
+            <line id="path-batt"  class="flow-seg seg-batt"  x1="240" y1="237" x2="240" y2="350"/>
 
             <!-- Flechita solar (baja desde paneles) -->
             <g id="arr-solar" style="visibility:hidden">
@@ -938,6 +944,14 @@
               </animateMotion>
             </g>
 
+            <!-- Flechita baterías (carga desde junction) -->
+            <g id="arr-batt" style="visibility:hidden">
+              <polygon points="-3.5,-2 3.5,0 -3.5,2" fill="#7ecb35"/>
+              <animateMotion dur="1.8s" repeatCount="indefinite" rotate="auto">
+                <mpath href="#def-batt"/>
+              </animateMotion>
+            </g>
+
             <!-- Nodo central -->
             <circle cx="240" cy="233" r="4" fill="#e5e7eb" id="junction-dot"/>
           </svg>
@@ -959,6 +973,12 @@
           <div class="flow-node fn-red">
             <img src="grafico_solar/red_electrica.png" alt="Red eléctrica">
             <span class="flow-lbl">Red eléctrica</span>
+          </div>
+
+          <!-- Baterías (abajo centro) -->
+          <div class="flow-node fn-batt">
+            <img id="batt-img" src="grafico_solar/baterias_0.png" alt="Baterías">
+            <span class="flow-lbl">Baterías</span>
           </div>
 
         </div>
@@ -1529,6 +1549,7 @@
     setActive('path-solar', 'arr-solar', solarOn);
     setActive('path-grid',  'arr-grid',  gridOn);
     setActive('path-house', 'arr-house', houseOn);
+    setActive('path-batt',  'arr-batt',  solarOn);
     document.getElementById('junction-dot').classList.toggle('active', houseOn);
 
     document.getElementById('path-house').style.stroke =
@@ -1558,6 +1579,14 @@
     };
     document.getElementById('flow-state-label').textContent = labels[state];
   }
+
+  // Animación de carga de baterías (cicla los 4 frames)
+  let battFrame = 0;
+  setInterval(() => {
+    battFrame = (battFrame + 1) % 4;
+    const img = document.getElementById('batt-img');
+    if (img) img.src = 'grafico_solar/baterias_' + battFrame + '.png';
+  }, 600);
 
   // Redibujar si cambia el tamaño
   window.addEventListener('resize', drawChart);
