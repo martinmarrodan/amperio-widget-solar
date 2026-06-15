@@ -677,7 +677,7 @@
       gap: 4px;
     }
 
-    .flow-node img { width: 100%; display: block; object-fit: contain; }
+    .flow-node img { width: 100%; display: block; object-fit: contain; aspect-ratio: 561 / 512; }
 
     /* Paneles: arriba centro */
     .fn-paneles { left: 50%; transform: translateX(-50%); top: 0; width: 22%; }
@@ -1774,6 +1774,9 @@
 
   // Redibujar si cambia el tamaño
   window.addEventListener('resize', drawChart);
+
+  // Preload house images so src swap is instant
+  ['casa_con_luz','casa_sin_luz'].forEach(n => { new Image().src = 'grafico_solar/' + n + '.png'; });
 
   updateMax();
   // Default system info labels for On Grid / Monofásico
