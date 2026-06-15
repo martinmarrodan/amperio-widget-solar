@@ -1200,7 +1200,7 @@
 
   function updateSystemInfoBar(paneles, inversorKw, fasico, sistemaNombre) {
     const month = new Date().getMonth();
-    const maxKw = paneles * 0.6;
+    const maxKw = paneles * 0.55;
     const kwh = calcDailyKwh(maxKw, month).toFixed(1);
 
     // Live tab bar
@@ -1225,17 +1225,19 @@
   function calcular() {
     const consumo = parseFloat(document.getElementById('consumo').value) || 350;
     const factor = parseFloat(document.getElementById('zona').value);
-    const hps = 4.5 * factor;
-    const kwPorPanel = 0.45 * hps * 30 * 0.80;
+    // Factor estacional promedio anual (para dimensionar el sistema para todo el año)
+    const avgSeasonFactor = MONTH_FACTOR.reduce((a, b) => a + b, 0) / MONTH_FACTOR.length;
+    const hps = 4.0 * factor * avgSeasonFactor;
+    const kwPorPanel = 0.55 * hps * 30 * 0.80;
     const paneles = Math.ceil(consumo / kwPorPanel);
-    const potenciaKw = (paneles * 0.45).toFixed(1);
+    const potenciaKw = (paneles * 0.55).toFixed(1);
     const ahorroARS = Math.round(consumo * 0.85 * 120).toLocaleString('es-AR');
     const co2Anual = Math.round(consumo * 0.85 * 12 * 0.4);
-    const costoUSD = paneles * 0.45 * 1200;
+    const costoUSD = paneles * 0.55 * 1200;
     const ahorroUSD = consumo * 0.85 * 12 * 0.07;
 
     // Tamaño de inversor: siguiente potencia estándar por encima del 90% del pico FV
-    const kWpTotal = paneles * 0.45;
+    const kWpTotal = paneles * 0.55;
     const inversorKw = INVERTER_SIZES.find(s => s >= kWpTotal * 0.9) || 50;
 
     // Mono/trifásico: Off Grid siempre monofásico
@@ -1622,7 +1624,7 @@
   }
 
   // -- Live simulation
-  const PANEL_KW = 0.6;
+  const PANEL_KW = 0.55;
   let energyToday = 0;
   let tipoInstalacion = 'residencial';
 
@@ -1635,7 +1637,7 @@
     document.getElementById('bar-max-label').textContent = 'máx. ' + maxKw.toFixed(1) + ' kW';
     // Auto-update system info bar
     const paneles = parseInt(document.getElementById('live-paneles').value) || 8;
-    const inversorKw = INVERTER_SIZES.find(s => s >= paneles * 0.45 * 0.9) || 50;
+    const inversorKw = INVERTER_SIZES.find(s => s >= paneles * 0.55 * 0.9) || 50;
     const month = new Date().getMonth();
     const kwh = calcDailyKwh(maxKw, month).toFixed(1);
     const sibInv = document.getElementById('sib-inversor');
