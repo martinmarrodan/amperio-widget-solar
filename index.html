@@ -1488,9 +1488,6 @@
     energyToday += power * (2 / 3600);
 
     document.getElementById('power-fill').style.width = (max > 0 ? Math.min(100, power / max * 100) : 0) + '%';
-    document.getElementById('stat-hoy').textContent = energyToday.toFixed(2);
-    document.getElementById('stat-co2').textContent = (energyToday * 0.4).toFixed(2);
-    document.getElementById('stat-arb').textContent = (energyToday * 0.4 / 21.7).toFixed(3);
     updateMax();
     updateFlowDiagram(power, max);
     drawChart();
