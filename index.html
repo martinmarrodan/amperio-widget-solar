@@ -450,36 +450,53 @@
       color: var(--gray);
     }
 
-    .stat-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 10px;
-      margin-top: 20px;
-    }
-
-    .stat-chip {
-      background: transparent;
-      border-top: 2px solid var(--gray-light);
-      padding: 16px 10px;
-      text-align: center;
-    }
-
-    .stat-chip .s-icon { font-size: 18px; margin-bottom: 4px; }
-
-    .stat-chip .s-val {
-      font-size: 20px;
-      font-weight: 900;
-      color: var(--text);
-      letter-spacing: -0.5px;
-    }
-
-    .stat-chip .s-lbl {
-      font-size: 10px;
+    .system-info-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 4px 0;
+      padding: 10px 0 0;
+      font-size: 11px;
       font-weight: 700;
       color: var(--gray);
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      margin-top: 2px;
+    }
+    .system-info-bar .sib-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .system-info-bar .sib-item + .sib-item::before {
+      content: '·';
+      margin: 0 8px;
+      color: var(--gray-light);
+      font-size: 14px;
+    }
+    .system-info-bar .sib-val { color: var(--text); }
+    .system-info-bar .sib-kwh { color: var(--green-dark); }
+
+    .kwh-dia-bar {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      margin-top: 12px;
+      padding: 10px 14px;
+      background: var(--green-light);
+      border-radius: var(--radius-sm);
+    }
+    .kwh-dia-bar .kdval {
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--green-dark);
+      letter-spacing: -0.5px;
+    }
+    .kwh-dia-bar .kdlbl {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--green-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
     }
 
     .live-config {
@@ -650,6 +667,27 @@
       letter-spacing: 0.02em;
     }
 
+    .res-sistema-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px 0;
+      margin: 14px 0 0;
+      padding: 10px 14px;
+      background: var(--green-light);
+      border-radius: var(--radius-sm);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--green-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .res-sistema-bar .rsb-item + .rsb-item::before {
+      content: '·';
+      margin: 0 7px;
+      color: var(--green);
+    }
+    .res-sistema-bar.result-hidden { display: none; }
+
     /* ---- PANEL VISIBILITY ---- */
     .panel { display: none; }
     .panel.active { display: block; }
@@ -697,27 +735,8 @@
       /* Ocultar placeholder cuando resultado está visible */
       #resultado:not(.result-hidden) ~ .result-placeholder { display: none; }
 
-      /* Live: chart izquierda / stats derecha */
-      .live-bottom {
-        display: grid;
-        grid-template-columns: 1fr auto;
-        gap: 40px;
-        align-items: start;
-        margin-top: 24px;
-      }
-
-      .stat-grid {
-        grid-template-columns: 1fr;
-        margin-top: 0;
-        min-width: 140px;
-      }
-
-      .stat-chip {
-        border-top: none;
-        border-bottom: 2px solid var(--gray-light);
-        padding: 14px 0;
-      }
-
+      /* Live: solo gráfico */
+      .live-bottom { margin-top: 24px; }
       .chart-wrap { margin-top: 0; }
     }
   </style>
@@ -798,6 +817,27 @@
             </div>
           </div>
 
+          <div class="form-group">
+            <label>Tipo de sistema</label>
+            <div class="select-wrap">
+              <select id="sistema-tipo" onchange="toggleRedTipo()">
+                <option value="ongrid">On Grid</option>
+                <option value="hibrido">Híbrido</option>
+                <option value="offgrid">Off Grid</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group" id="grupo-red">
+            <label>Tipo de red</label>
+            <div class="select-wrap">
+              <select id="red-tipo">
+                <option value="monofasica">Monofásica</option>
+                <option value="trifasica">Trifásica</option>
+              </select>
+            </div>
+          </div>
+
           <button class="btn btn-primary" onclick="calcular()">Calculá tu sistema solar</button>
         </div>
 
@@ -825,6 +865,14 @@
                 <div class="lbl">Retorno de inversión estimado</div>
               </div>
             </div>
+            <div id="res-sistema-bar" class="res-sistema-bar result-hidden">
+              <span class="rsb-item" id="rsb-paneles">–</span>
+              <span class="rsb-item" id="rsb-inversor">–</span>
+              <span class="rsb-item" id="rsb-fasico">–</span>
+              <span class="rsb-item" id="rsb-sistema">–</span>
+              <span class="rsb-item" id="rsb-kwh">–</span>
+            </div>
+
             <a href="https://amperio.com.ar/site/#contacto" class="cta-btn" target="_blank">
               Solicitá tu presupuesto <span>→</span>
             </a>
@@ -942,25 +990,14 @@
             <span class="chart-title">Curva de generación diaria</span>
             <span class="chart-meta" id="chart-month-label">–</span>
           </div>
+          <div class="system-info-bar" id="system-info-bar" style="display:none">
+            <div class="sib-item"><span class="sib-val" id="sib-paneles">–</span> paneles</div>
+            <div class="sib-item">Inversor <span class="sib-val" id="sib-inversor">–</span> kW</div>
+            <div class="sib-item"><span class="sib-val" id="sib-fasico">–</span></div>
+            <div class="sib-item"><span class="sib-val" id="sib-sistema">–</span></div>
+            <div class="sib-item"><span class="sib-kwh" id="sib-kwh">–</span> kWh/día est.</div>
+          </div>
           <canvas id="solar-chart"></canvas>
-        </div>
-
-        <div class="stat-grid">
-          <div class="stat-chip">
-            <div class="s-icon">⚡</div>
-            <div class="s-val" id="stat-hoy">0.00</div>
-            <div class="s-lbl">kWh hoy</div>
-          </div>
-          <div class="stat-chip">
-            <div class="s-icon">🌿</div>
-            <div class="s-val" id="stat-co2">0.00</div>
-            <div class="s-lbl">kg CO₂ evitado</div>
-          </div>
-          <div class="stat-chip">
-            <div class="s-icon">🌳</div>
-            <div class="s-val" id="stat-arb">0</div>
-            <div class="s-lbl">árboles equiv.</div>
-          </div>
         </div>
       </div>
     </div>
@@ -995,6 +1032,50 @@
     document.getElementById('consumo').value = document.getElementById('consumo-slider').value;
   }
 
+  function toggleRedTipo() {
+    const st = document.getElementById('sistema-tipo').value;
+    document.getElementById('grupo-red').style.display = st === 'offgrid' ? 'none' : '';
+  }
+
+  const INVERTER_SIZES = [1.5, 2, 3, 3.6, 4, 5, 6, 8, 10, 12, 15, 20, 25, 30, 40, 50];
+
+  function calcDailyKwh(maxKw, month) {
+    const step = 24 / 1440;
+    let total = 0;
+    for (let i = 0; i <= 1440; i++) {
+      total += solarPower(i * step, maxKw, month) * step;
+    }
+    return total;
+  }
+
+  function updateSystemInfoBar(paneles, inversorKw, fasico, sistemaNombre) {
+    const month = new Date().getMonth();
+    const maxKw = paneles * 0.6;
+    const kwh = calcDailyKwh(maxKw, month).toFixed(1);
+
+    // Live tab bar
+    const bar = document.getElementById('system-info-bar');
+    if (bar) {
+      document.getElementById('sib-paneles').textContent = paneles;
+      document.getElementById('sib-inversor').textContent = inversorKw;
+      document.getElementById('sib-fasico').textContent = fasico;
+      document.getElementById('sib-sistema').textContent = sistemaNombre;
+      document.getElementById('sib-kwh').textContent = '~' + kwh;
+      bar.style.display = 'flex';
+    }
+
+    // Estimator result bar
+    const rbar = document.getElementById('res-sistema-bar');
+    if (rbar) {
+      document.getElementById('rsb-paneles').textContent = paneles + ' paneles';
+      document.getElementById('rsb-inversor').textContent = 'Inversor ' + inversorKw + ' kW';
+      document.getElementById('rsb-fasico').textContent = fasico;
+      document.getElementById('rsb-sistema').textContent = sistemaNombre;
+      document.getElementById('rsb-kwh').textContent = '~' + kwh + ' kWh/día';
+      rbar.classList.remove('result-hidden');
+    }
+  }
+
   function calcular() {
     const consumo = parseFloat(document.getElementById('consumo').value) || 350;
     const factor = parseFloat(document.getElementById('zona').value);
@@ -1006,7 +1087,16 @@
     const co2Anual = Math.round(consumo * 0.85 * 12 * 0.4);
     const costoUSD = paneles * 0.45 * 1200;
     const ahorroUSD = consumo * 0.85 * 12 * 0.07;
-    const retornoAnios = (costoUSD / ahorroUSD).toFixed(1);
+
+    // Tamaño de inversor: siguiente potencia estándar por encima del 90% del pico FV
+    const kWpTotal = paneles * 0.45;
+    const inversorKw = INVERTER_SIZES.find(s => s >= kWpTotal * 0.9) || 50;
+
+    // Mono/trifásico: Off Grid siempre monofásico
+    const sistemaTipo = document.getElementById('sistema-tipo').value;
+    const redTipo = document.getElementById('red-tipo').value;
+    const fasico = (sistemaTipo === 'offgrid' || redTipo === 'monofasica') ? 'Monofásico' : 'Trifásico';
+    const sistemaNombre = { ongrid: 'On Grid', hibrido: 'Híbrido', offgrid: 'Off Grid' }[sistemaTipo];
 
     document.getElementById('res-paneles').textContent = paneles;
     document.getElementById('res-kw').innerHTML = potenciaKw + ' <em>kW</em>';
@@ -1014,11 +1104,12 @@
     document.getElementById('res-co2').innerHTML = co2Anual + ' <em>kg</em>';
     document.getElementById('res-retorno').innerHTML = (costoUSD / ahorroUSD).toFixed(1) + ' <em>años</em>';
 
-    // Sincronizar paneles y tipo con el tab de monitoreo
+    // Sincronizar con el tab de monitoreo
     document.getElementById('live-paneles').value = paneles;
     tipoInstalacion = document.getElementById('tipo').value;
     energyToday = 0;
     updateMax();
+    updateSystemInfoBar(paneles, inversorKw, fasico, sistemaNombre);
 
     const el = document.getElementById('resultado');
     el.classList.remove('result-hidden');
@@ -1191,14 +1282,15 @@
       ctx.fillText((peakKw * pct).toFixed(1), padL - 4, y + 3);
     });
 
-    // Línea vertical "ahora"
     // Marcadores de salida y puesta del sol
     const [sunR, sunS] = getSunTimes(month);
     [
-      { h: sunR, color: '#f59e0b', label: '↑ ' + formatHour(sunR) },
-      { h: sunS, color: '#94a3b8', label: '↓ ' + formatHour(sunS) }
-    ].forEach(({ h, color, label }) => {
+      { h: sunR, color: '#f59e0b', rise: true  },
+      { h: sunS, color: '#94a3b8', rise: false }
+    ].forEach(({ h, color, rise }) => {
       const x = xOf(h);
+
+      // Línea vertical punteada
       ctx.beginPath();
       ctx.moveTo(x, padT);
       ctx.lineTo(x, padT + chartH);
@@ -1207,10 +1299,38 @@
       ctx.setLineDash([2, 4]);
       ctx.stroke();
       ctx.setLineDash([]);
+
+      // Icono sol (círculo + 8 rayos) — arriba de la línea
+      const sy = padT + 10;
+      const sr = 3;
+      ctx.save();
+      ctx.translate(x, sy);
+      ctx.fillStyle = color;
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.arc(0, 0, sr, 0, Math.PI * 2);
+      ctx.fill();
+      for (let a = 0; a < 8; a++) {
+        const ang = (a * Math.PI) / 4;
+        const r0 = sr + 1.5, r1 = r0 + 2;
+        ctx.beginPath();
+        ctx.moveTo(Math.cos(ang) * r0, Math.sin(ang) * r0);
+        ctx.lineTo(Math.cos(ang) * r1, Math.sin(ang) * r1);
+        ctx.stroke();
+      }
+      // Flecha bajo el icono (↑ salida, ↓ puesta)
+      ctx.fillStyle = color;
+      ctx.font = `700 7px 'Nexa', sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.fillText(rise ? '↑' : '↓', 0, sr + 11);
+      ctx.restore();
+
+      // Hora — debajo del ícono, encima de la curva (alto del gráfico)
       ctx.fillStyle = color;
       ctx.font = `600 8px 'Nexa', sans-serif`;
       ctx.textAlign = 'center';
-      ctx.fillText(label, x, padT + chartH - 5);
+      ctx.fillText(formatHour(h), x, padT + 34);
     });
 
     const nowX = xOf(currentH);
