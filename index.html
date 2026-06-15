@@ -1369,6 +1369,94 @@
       ctx.textAlign = 'center';
       ctx.fillText(label, lx, Math.max(nowY - 10, padT + 10));
     }
+
+    // Scrubbing interactivo
+    if (chartHoverX !== null) {
+      const hoverH = ((chartHoverX - padL) / chartW) * 24;
+      if (hoverH >= 0 && hoverH <= 24) {
+        const hx = xOf(hoverH);
+        const hoverKw = solarPower(hoverH, maxKw, month);
+        const hy = yOf(hoverKw);
+
+        // Línea vertical
+        ctx.beginPath();
+        ctx.moveTo(hx, padT);
+        ctx.lineTo(hx, padT + chartH);
+        ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([]);
+        ctx.stroke();
+
+        // Punto sobre la curva
+        ctx.beginPath();
+        ctx.arc(hx, hy, 5, 0, Math.PI * 2);
+        ctx.fillStyle = '#5a9e20';
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Tooltip
+        const tipText = formatHour(hoverH) + '   ' + hoverKw.toFixed(2) + ' kW';
+        ctx.font = `700 10px 'Nexa', sans-serif`;
+        const tw = ctx.measureText(tipText).width;
+        const px = 8, py = 5, th = 20, tr = 4;
+        const bw = tw + px * 2;
+        let tx = hx + 10;
+        if (tx + bw > W - padR) tx = hx - bw - 10;
+        let ty = hy - th / 2;
+        if (ty < padT + 2) ty = padT + 2;
+        if (ty + th > padT + chartH - 2) ty = padT + chartH - th - 2;
+
+        ctx.fillStyle = 'rgba(10,21,8,0.85)';
+        ctx.beginPath();
+        ctx.moveTo(tx + tr, ty);
+        ctx.lineTo(tx + bw - tr, ty);
+        ctx.quadraticCurveTo(tx + bw, ty, tx + bw, ty + tr);
+        ctx.lineTo(tx + bw, ty + th - tr);
+        ctx.quadraticCurveTo(tx + bw, ty + th, tx + bw - tr, ty + th);
+        ctx.lineTo(tx + tr, ty + th);
+        ctx.quadraticCurveTo(tx, ty + th, tx, ty + th - tr);
+        ctx.lineTo(tx, ty + tr);
+        ctx.quadraticCurveTo(tx, ty, tx + tr, ty);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = '#fff';
+        ctx.textAlign = 'left';
+        ctx.fillText(tipText, tx + px, ty + th / 2 + 3.5);
+      }
+    }
+  }
+
+  // -- Hover scrubbing
+  let chartHoverX = null;
+
+  function initChartScrub() {
+    const canvas = document.getElementById('solar-chart');
+    if (!canvas) return;
+
+    canvas.style.cursor = 'crosshair';
+
+    canvas.addEventListener('mousemove', e => {
+      const rect = canvas.getBoundingClientRect();
+      chartHoverX = e.clientX - rect.left;
+      drawChart();
+    });
+    canvas.addEventListener('mouseleave', () => {
+      chartHoverX = null;
+      drawChart();
+    });
+    canvas.addEventListener('touchmove', e => {
+      e.preventDefault();
+      const rect = canvas.getBoundingClientRect();
+      chartHoverX = e.touches[0].clientX - rect.left;
+      drawChart();
+    }, { passive: false });
+    canvas.addEventListener('touchend', () => {
+      chartHoverX = null;
+      drawChart();
+    });
   }
 
   // -- Live simulation
@@ -1466,6 +1554,7 @@
   fetchSunTimes();
   setInterval(tickLive, 2000);
   tickLive();
+  initChartScrub();
 </script>
 
 </body>
