@@ -1432,6 +1432,17 @@
   // -- Hover scrubbing
   let chartHoverX = null;
 
+  function scrubTo(canvasX, canvas) {
+    const padL = 36, padR = 12;
+    const chartW = canvas.offsetWidth - padL - padR;
+    const hoverH = ((canvasX - padL) / chartW) * 24;
+    if (hoverH >= 0 && hoverH <= 24) {
+      const month = new Date().getMonth();
+      const maxKw = getMaxKw();
+      updateFlowDiagram(solarPower(hoverH, maxKw, month), maxKw);
+    }
+  }
+
   function initChartScrub() {
     const canvas = document.getElementById('solar-chart');
     if (!canvas) return;
@@ -1441,20 +1452,24 @@
     canvas.addEventListener('mousemove', e => {
       const rect = canvas.getBoundingClientRect();
       chartHoverX = e.clientX - rect.left;
+      scrubTo(chartHoverX, canvas);
       drawChart();
     });
     canvas.addEventListener('mouseleave', () => {
       chartHoverX = null;
+      updateFlowDiagram(getLivePower(), getMaxKw());
       drawChart();
     });
     canvas.addEventListener('touchmove', e => {
       e.preventDefault();
       const rect = canvas.getBoundingClientRect();
       chartHoverX = e.touches[0].clientX - rect.left;
+      scrubTo(chartHoverX, canvas);
       drawChart();
     }, { passive: false });
     canvas.addEventListener('touchend', () => {
       chartHoverX = null;
+      updateFlowDiagram(getLivePower(), getMaxKw());
       drawChart();
     });
   }
@@ -1489,7 +1504,7 @@
 
     document.getElementById('power-fill').style.width = (max > 0 ? Math.min(100, power / max * 100) : 0) + '%';
     updateMax();
-    updateFlowDiagram(power, max);
+    if (chartHoverX === null) updateFlowDiagram(power, max);
     drawChart();
   }
 
