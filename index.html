@@ -903,15 +903,16 @@
 
           <svg class="flow-svg" viewBox="0 0 480 400" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
             <defs>
-              <path id="def-solar" d="M 240 88 L 240 229"/>
-              <path id="def-house" d="M 237 233 L 100 233"/>
-              <path id="def-grid"  d="M 380 233 L 243 233"/>
-              <path id="def-batt"  d="M 240 237 L 240 375"/>
+              <path id="def-solar"       d="M 240 88 L 240 229"/>
+              <path id="def-house"       d="M 237 233 L 100 233"/>
+              <path id="def-grid"        d="M 380 233 L 243 233"/>
+              <path id="def-batt"        d="M 240 237 L 240 375"/>
+              <path id="def-batt-right"  d="M 243 233 L 380 233"/>
             </defs>
 
             <!-- Líneas base (guía siempre visible) — cruz completa -->
             <line class="base-line" x1="240" y1="88"  x2="240" y2="233"/>
-            <line class="base-line" x1="240" y1="237" x2="240" y2="375"/>
+            <line id="base-batt-v" class="base-line" x1="240" y1="237" x2="240" y2="375"/>
             <line class="base-line" x1="100" y1="233" x2="380" y2="233"/>
 
             <!-- Líneas activas coloreadas -->
@@ -919,6 +920,7 @@
             <line id="path-house" class="flow-seg seg-house" x1="237" y1="233" x2="100" y2="233"/>
             <line id="path-grid"  class="flow-seg seg-grid"  x1="380" y1="233" x2="243" y2="233"/>
             <line id="path-batt"  class="flow-seg seg-batt"  x1="240" y1="237" x2="240" y2="375"/>
+            <line id="path-batt-right" class="flow-seg seg-batt" x1="243" y1="233" x2="380" y2="233" style="visibility:hidden"/>
 
             <!-- Flechita solar (baja desde paneles) -->
             <g id="arr-solar" style="visibility:hidden">
@@ -944,11 +946,19 @@
               </animateMotion>
             </g>
 
-            <!-- Flechita baterías (carga desde junction) -->
+            <!-- Flechita baterías (carga desde junction, vertical abajo) -->
             <g id="arr-batt" style="visibility:hidden">
               <polygon points="-3.5,-2 3.5,0 -3.5,2" fill="#7ecb35"/>
               <animateMotion dur="1.8s" repeatCount="indefinite" rotate="auto">
                 <mpath href="#def-batt"/>
+              </animateMotion>
+            </g>
+
+            <!-- Flechita baterías Off Grid (va hacia la derecha) -->
+            <g id="arr-batt-right" style="visibility:hidden">
+              <polygon points="-3.5,-2 3.5,0 -3.5,2" fill="#7ecb35"/>
+              <animateMotion dur="1.4s" repeatCount="indefinite" rotate="auto">
+                <mpath href="#def-batt-right"/>
               </animateMotion>
             </g>
 
@@ -1055,6 +1065,40 @@
   function toggleRedTipo() {
     const st = document.getElementById('sistema-tipo').value;
     document.getElementById('grupo-red').style.display = st === 'offgrid' ? 'none' : '';
+    applySistemaDiagram();
+  }
+
+  function applySistemaDiagram() {
+    const st = (document.getElementById('sistema-tipo')?.value) || 'ongrid';
+    const fnBatt = document.querySelector('.fn-batt');
+    const fnRed  = document.querySelector('.fn-red');
+    const baseBattV = document.getElementById('base-batt-v');
+
+    if (st === 'ongrid') {
+      fnBatt.style.display = 'none';
+      fnRed.style.display  = '';
+      baseBattV.style.display = 'none';
+    } else if (st === 'hibrido') {
+      fnBatt.style.display = '';
+      fnRed.style.display  = '';
+      baseBattV.style.display = '';
+      // Restore battery to bottom-center
+      fnBatt.style.left      = '50%';
+      fnBatt.style.transform = 'translateX(-50%)';
+      fnBatt.style.bottom    = '1%';
+      fnBatt.style.top       = 'auto';
+      fnBatt.style.right     = 'auto';
+    } else if (st === 'offgrid') {
+      fnRed.style.display    = 'none';
+      fnBatt.style.display   = '';
+      baseBattV.style.display = 'none';
+      // Move battery to red's position (right side)
+      fnBatt.style.right     = '3.5%';
+      fnBatt.style.top       = '43.5%';
+      fnBatt.style.left      = 'auto';
+      fnBatt.style.transform = 'none';
+      fnBatt.style.bottom    = 'auto';
+    }
   }
 
   const INVERTER_SIZES = [1.5, 2, 3, 3.6, 4, 5, 6, 8, 10, 12, 15, 20, 25, 30, 40, 50];
@@ -1130,6 +1174,7 @@
     energyToday = 0;
     updateMax();
     updateSystemInfoBar(paneles, inversorKw, fasico, sistemaNombre);
+    applySistemaDiagram();
 
     const el = document.getElementById('resultado');
     el.classList.remove('result-hidden');
@@ -1542,14 +1587,31 @@
     const houseOn = solarOn || gridOn;
 
     const setActive = (segId, arrId, on) => {
-      document.getElementById(segId).classList.toggle('active', on);
-      document.getElementById(arrId).style.visibility = on ? 'visible' : 'hidden';
+      const seg = document.getElementById(segId);
+      const arr = document.getElementById(arrId);
+      if (seg) seg.classList.toggle('active', on);
+      if (arr) arr.style.visibility = on ? 'visible' : 'hidden';
     };
 
+    const st = (document.getElementById('sistema-tipo')?.value) || 'ongrid';
+
     setActive('path-solar', 'arr-solar', solarOn);
-    setActive('path-grid',  'arr-grid',  gridOn);
     setActive('path-house', 'arr-house', houseOn);
-    setActive('path-batt',  'arr-batt',  solarOn);
+
+    if (st === 'ongrid') {
+      setActive('path-grid', 'arr-grid', gridOn);
+      setActive('path-batt', 'arr-batt', false);
+      setActive('path-batt-right', 'arr-batt-right', false);
+    } else if (st === 'hibrido') {
+      setActive('path-grid', 'arr-grid', gridOn);
+      setActive('path-batt', 'arr-batt', solarOn);
+      setActive('path-batt-right', 'arr-batt-right', false);
+    } else if (st === 'offgrid') {
+      setActive('path-grid', 'arr-grid', false);
+      setActive('path-batt', 'arr-batt', false);
+      setActive('path-batt-right', 'arr-batt-right', solarOn);
+    }
+
     document.getElementById('junction-dot').classList.toggle('active', houseOn);
 
     document.getElementById('path-house').style.stroke =
@@ -1596,6 +1658,7 @@
   setInterval(tickLive, 2000);
   tickLive();
   initChartScrub();
+  applySistemaDiagram();
 </script>
 
 </body>
