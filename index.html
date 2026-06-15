@@ -585,7 +585,7 @@
     .flow-inner {
       position: relative;
       width: 100%;
-      padding-bottom: 79.2%; /* proporción 480:380 */
+      padding-bottom: 83.3%; /* proporción 480:400 */
       height: 0;
     }
 
@@ -634,10 +634,10 @@
     .fn-paneles { left: 50%; transform: translateX(-50%); top: 0; width: 22%; }
 
     /* Casa: abajo izquierda */
-    .fn-casa { left: 1%; top: 41%; width: 20%; }
+    .fn-casa { left: 1%; top: 44%; width: 20%; }
 
     /* Red: abajo derecha */
-    .fn-red { right: 1%; top: 41%; width: 20%; }
+    .fn-red { right: 1%; top: 44%; width: 20%; }
 
     /* Baterías: abajo centro */
     .fn-batt { left: 50%; transform: translateX(-50%); bottom: 1%; width: 20%; }
@@ -901,24 +901,24 @@
       <div class="flow-diagram">
         <div class="flow-inner">
 
-          <svg class="flow-svg" viewBox="0 0 480 380" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <svg class="flow-svg" viewBox="0 0 480 400" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
             <defs>
-              <path id="def-solar" d="M 240 88 L 240 196"/>
-              <path id="def-house" d="M 237 200 L 100 200"/>
-              <path id="def-grid"  d="M 380 200 L 243 200"/>
-              <path id="def-batt"  d="M 240 204 L 240 345"/>
+              <path id="def-solar" d="M 240 88 L 240 229"/>
+              <path id="def-house" d="M 237 233 L 100 233"/>
+              <path id="def-grid"  d="M 380 233 L 243 233"/>
+              <path id="def-batt"  d="M 240 237 L 240 375"/>
             </defs>
 
             <!-- Líneas base (guía siempre visible) — cruz completa -->
-            <line class="base-line" x1="240" y1="88"  x2="240" y2="200"/>
-            <line class="base-line" x1="240" y1="204" x2="240" y2="345"/>
-            <line class="base-line" x1="100" y1="200" x2="380" y2="200"/>
+            <line class="base-line" x1="240" y1="88"  x2="240" y2="233"/>
+            <line class="base-line" x1="240" y1="237" x2="240" y2="375"/>
+            <line class="base-line" x1="100" y1="233" x2="380" y2="233"/>
 
             <!-- Líneas activas coloreadas -->
-            <line id="path-solar" class="flow-seg seg-solar" x1="240" y1="88"  x2="240" y2="196"/>
-            <line id="path-house" class="flow-seg seg-house" x1="237" y1="200" x2="100" y2="200"/>
-            <line id="path-grid"  class="flow-seg seg-grid"  x1="380" y1="200" x2="243" y2="200"/>
-            <line id="path-batt"  class="flow-seg seg-batt"  x1="240" y1="204" x2="240" y2="345"/>
+            <line id="path-solar" class="flow-seg seg-solar" x1="240" y1="88"  x2="240" y2="229"/>
+            <line id="path-house" class="flow-seg seg-house" x1="237" y1="233" x2="100" y2="233"/>
+            <line id="path-grid"  class="flow-seg seg-grid"  x1="380" y1="233" x2="243" y2="233"/>
+            <line id="path-batt"  class="flow-seg seg-batt"  x1="240" y1="237" x2="240" y2="375"/>
 
             <!-- Flechita solar (baja desde paneles) -->
             <g id="arr-solar" style="visibility:hidden">
@@ -953,7 +953,7 @@
             </g>
 
             <!-- Nodo central -->
-            <circle cx="240" cy="200" r="4" fill="#e5e7eb" id="junction-dot"/>
+            <circle cx="240" cy="233" r="4" fill="#e5e7eb" id="junction-dot"/>
           </svg>
 
           <!-- Paneles (arriba centro) -->
