@@ -455,7 +455,9 @@
       flex-wrap: wrap;
       align-items: center;
       gap: 4px 0;
-      padding: 10px 0 0;
+      padding: 18px 0 0;
+      margin-top: 18px;
+      border-top: 1px solid var(--gray-light);
       font-size: 11px;
       font-weight: 700;
       color: var(--gray);
@@ -475,6 +477,20 @@
     }
     .system-info-bar .sib-val { color: var(--text); }
     .system-info-bar .sib-kwh { color: var(--green-dark); }
+    .sib-paneles-input {
+      width: 36px;
+      border: none;
+      background: transparent;
+      font: inherit;
+      font-weight: 700;
+      color: var(--text);
+      text-align: right;
+      padding: 0;
+      outline: none;
+      -moz-appearance: textfield;
+    }
+    .sib-paneles-input::-webkit-outer-spin-button,
+    .sib-paneles-input::-webkit-inner-spin-button { -webkit-appearance: none; }
 
     .kwh-dia-bar {
       display: flex;
@@ -497,12 +513,6 @@
       color: var(--green-dark);
       text-transform: uppercase;
       letter-spacing: 0.05em;
-    }
-
-    .live-config {
-      padding-top: 20px;
-      border-top: 1px solid var(--gray-light);
-      margin-top: 20px;
     }
 
     /* ---- CHART ---- */
@@ -1004,13 +1014,16 @@
         <span id="bar-max-label">máx. – kW</span>
       </div>
 
-      <!-- Config paneles -->
-      <div class="live-config">
-        <label style="font-size:13px;font-weight:700;color:var(--text);display:block;margin-bottom:8px">Paneles instalados</label>
-        <div class="input-wrap" style="max-width:180px">
-          <input type="number" id="live-paneles" value="8" min="1" max="200" oninput="updateMax()"/>
-          <span class="unit">paneles</span>
+      <!-- Sistema info bar con paneles editables -->
+      <div class="system-info-bar" id="system-info-bar">
+        <div class="sib-item">
+          <input type="number" id="live-paneles" value="8" min="1" max="200" oninput="updateMax()" class="sib-paneles-input"/>
+          <span>paneles</span>
         </div>
+        <div class="sib-item">Inversor <span class="sib-val" id="sib-inversor">–</span> kW</div>
+        <div class="sib-item"><span class="sib-val" id="sib-fasico">–</span></div>
+        <div class="sib-item"><span class="sib-val" id="sib-sistema">–</span></div>
+        <div class="sib-item"><span class="sib-kwh" id="sib-kwh">–</span> kWh/día est.</div>
       </div>
 
       <div class="live-bottom">
@@ -1019,13 +1032,6 @@
           <div class="chart-header">
             <span class="chart-title">Curva de generación diaria</span>
             <span class="chart-meta" id="chart-month-label">–</span>
-          </div>
-          <div class="system-info-bar" id="system-info-bar" style="display:none">
-            <div class="sib-item"><span class="sib-val" id="sib-paneles">–</span> paneles</div>
-            <div class="sib-item">Inversor <span class="sib-val" id="sib-inversor">–</span> kW</div>
-            <div class="sib-item"><span class="sib-val" id="sib-fasico">–</span></div>
-            <div class="sib-item"><span class="sib-val" id="sib-sistema">–</span></div>
-            <div class="sib-item"><span class="sib-kwh" id="sib-kwh">–</span> kWh/día est.</div>
           </div>
           <canvas id="solar-chart"></canvas>
         </div>
@@ -1118,15 +1124,11 @@
     const kwh = calcDailyKwh(maxKw, month).toFixed(1);
 
     // Live tab bar
-    const bar = document.getElementById('system-info-bar');
-    if (bar) {
-      document.getElementById('sib-paneles').textContent = paneles;
-      document.getElementById('sib-inversor').textContent = inversorKw;
-      document.getElementById('sib-fasico').textContent = fasico;
-      document.getElementById('sib-sistema').textContent = sistemaNombre;
-      document.getElementById('sib-kwh').textContent = '~' + kwh;
-      bar.style.display = 'flex';
-    }
+    document.getElementById('live-paneles').value = paneles;
+    document.getElementById('sib-inversor').textContent = inversorKw;
+    document.getElementById('sib-fasico').textContent = fasico;
+    document.getElementById('sib-sistema').textContent = sistemaNombre;
+    document.getElementById('sib-kwh').textContent = '~' + kwh;
 
     // Estimator result bar
     const rbar = document.getElementById('res-sistema-bar');
@@ -1549,7 +1551,17 @@
   }
 
   function updateMax() {
-    document.getElementById('bar-max-label').textContent = 'máx. ' + getMaxKw().toFixed(1) + ' kW';
+    const maxKw = getMaxKw();
+    document.getElementById('bar-max-label').textContent = 'máx. ' + maxKw.toFixed(1) + ' kW';
+    // Auto-update system info bar
+    const paneles = parseInt(document.getElementById('live-paneles').value) || 8;
+    const inversorKw = INVERTER_SIZES.find(s => s >= paneles * 0.45 * 0.9) || 50;
+    const month = new Date().getMonth();
+    const kwh = calcDailyKwh(maxKw, month).toFixed(1);
+    const sibInv = document.getElementById('sib-inversor');
+    const sibKwh = document.getElementById('sib-kwh');
+    if (sibInv) sibInv.textContent = inversorKw;
+    if (sibKwh) sibKwh.textContent = '~' + kwh;
   }
 
   function getLivePower() {
@@ -1654,6 +1666,9 @@
   window.addEventListener('resize', drawChart);
 
   updateMax();
+  // Default system info labels for On Grid / Monofásico
+  document.getElementById('sib-fasico').textContent = 'Monofásico';
+  document.getElementById('sib-sistema').textContent = 'On Grid';
   fetchSunTimes();
   setInterval(tickLive, 2000);
   tickLive();
