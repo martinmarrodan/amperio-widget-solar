@@ -585,7 +585,7 @@
     .flow-inner {
       position: relative;
       width: 100%;
-      padding-bottom: 77.1%; /* proporción 480:370 */
+      padding-bottom: 95.8%; /* proporción 480:460 */
       height: 0;
     }
 
@@ -634,13 +634,13 @@
     .fn-paneles { left: 50%; transform: translateX(-50%); top: 0; width: 22%; }
 
     /* Casa: abajo izquierda */
-    .fn-casa { left: 5%; top: 47%; width: 20%; }
+    .fn-casa { left: 5%; top: 31%; width: 20%; }
 
     /* Red: abajo derecha */
-    .fn-red { right: 1%; top: 47%; width: 20%; }
+    .fn-red { right: 1%; top: 31%; width: 20%; }
 
     /* Baterías: abajo centro */
-    .fn-batt { left: 50%; transform: translateX(-50%); bottom: 2%; width: 22%; }
+    .fn-batt { left: 50%; transform: translateX(-50%); bottom: 1%; width: 22%; }
 
     .flow-lbl {
       font-size: 9px;
@@ -901,24 +901,24 @@
       <div class="flow-diagram">
         <div class="flow-inner">
 
-          <svg class="flow-svg" viewBox="0 0 480 370" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <svg class="flow-svg" viewBox="0 0 480 460" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
             <defs>
               <path id="def-solar" d="M 240 88 L 240 227"/>
               <path id="def-house" d="M 237 233 L 112 233"/>
               <path id="def-grid"  d="M 393 233 L 243 233"/>
-              <path id="def-batt"  d="M 240 237 L 240 350"/>
+              <path id="def-batt"  d="M 240 237 L 240 420"/>
             </defs>
 
             <!-- Líneas base (guía siempre visible) — cruz completa -->
             <line class="base-line" x1="240" y1="88"  x2="240" y2="233"/>
-            <line class="base-line" x1="240" y1="237" x2="240" y2="350"/>
+            <line class="base-line" x1="240" y1="237" x2="240" y2="420"/>
             <line class="base-line" x1="112" y1="233" x2="393" y2="233"/>
 
             <!-- Líneas activas coloreadas -->
             <line id="path-solar" class="flow-seg seg-solar" x1="240" y1="88"  x2="240" y2="229"/>
             <line id="path-house" class="flow-seg seg-house" x1="237" y1="233" x2="112" y2="233"/>
             <line id="path-grid"  class="flow-seg seg-grid"  x1="393" y1="233" x2="243" y2="233"/>
-            <line id="path-batt"  class="flow-seg seg-batt"  x1="240" y1="237" x2="240" y2="350"/>
+            <line id="path-batt"  class="flow-seg seg-batt"  x1="240" y1="237" x2="240" y2="420"/>
 
             <!-- Flechita solar (baja desde paneles) -->
             <g id="arr-solar" style="visibility:hidden">
