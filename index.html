@@ -902,18 +902,6 @@
                 <div class="val" id="res-kw">–</div>
                 <div class="lbl">Potencia</div>
               </div>
-              <div class="result-chip">
-                <div class="val" id="res-ahorro">–</div>
-                <div class="lbl">Ahorro mensual est.</div>
-              </div>
-              <div class="result-chip">
-                <div class="val" id="res-co2">– <em>kg</em></div>
-                <div class="lbl">CO₂ evitado / año</div>
-              </div>
-              <div class="result-chip dark">
-                <div class="val" id="res-retorno">–</div>
-                <div class="lbl">Retorno de inversión estimado</div>
-              </div>
             </div>
             <div id="res-sistema-bar" class="res-sistema-bar result-hidden">
               <span class="rsb-item" id="rsb-paneles">–</span>
@@ -1266,10 +1254,6 @@
     const kwPorPanel = 0.55 * hps * 30 * 0.80;
     const paneles = Math.ceil(consumo / kwPorPanel);
     const potenciaKw = (paneles * 0.55).toFixed(1);
-    const ahorroARS = Math.round(consumo * 0.85 * 120).toLocaleString('es-AR');
-    const co2Anual = Math.round(consumo * 0.85 * 12 * 0.4);
-    const costoUSD = paneles * 0.55 * 1200;
-    const ahorroUSD = consumo * 0.85 * 12 * 0.07;
 
     // Tamaño de inversor: siguiente potencia estándar por encima del 90% del pico FV
     const kWpTotal = paneles * 0.55;
@@ -1280,9 +1264,6 @@
 
     document.getElementById('res-paneles').textContent = paneles;
     document.getElementById('res-kw').innerHTML = potenciaKw + ' <em>kW</em>';
-    document.getElementById('res-ahorro').innerHTML = '$' + ahorroARS;
-    document.getElementById('res-co2').innerHTML = co2Anual + ' <em>kg</em>';
-    document.getElementById('res-retorno').innerHTML = (costoUSD / ahorroUSD).toFixed(1) + ' <em>años</em>';
 
     // Sincronizar con el tab de monitoreo
     document.getElementById('live-paneles').value = paneles;
