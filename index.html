@@ -695,6 +695,17 @@
     /* Baterías: abajo centro */
     .fn-batt { left: 50%; transform: translateX(-50%); bottom: 1%; width: 20%; }
 
+    /* Inversor: centro del junction (top = 233/400 = 58.25%) */
+    .fn-inversor {
+      left: 50%; top: 58.25%;
+      transform: translate(-50%, -50%);
+      width: 13%;
+      z-index: 10;
+    }
+    .inversor-wrap { position: relative; width: 100%; }
+    .inversor-wrap img { width: 100%; display: block; transition: opacity 0.35s; }
+    .inversor-wrap img + img { position: absolute; top: 0; left: 0; opacity: 0; }
+
     .flow-lbl {
       font-size: 9px;
       font-weight: 700;
@@ -1032,8 +1043,8 @@
               </animateMotion>
             </g>
 
-            <!-- Nodo central -->
-            <circle cx="240" cy="233" r="4" fill="#e5e7eb" id="junction-dot"/>
+            <!-- Nodo central (oculto, reemplazado por el inversor HTML) -->
+            <circle cx="240" cy="233" r="4" fill="#e5e7eb" id="junction-dot" style="display:none"/>
           </svg>
 
           <!-- Paneles (arriba centro) -->
@@ -1061,6 +1072,15 @@
               <span class="grid-toggle-track"><span class="grid-toggle-thumb"></span></span>
               <span class="grid-toggle-lbl" id="grid-toggle-lbl">ON</span>
             </label>
+          </div>
+
+          <!-- Inversor (centro del diagrama) -->
+          <div class="flow-node fn-inversor">
+            <div class="inversor-wrap">
+              <img id="inv-f1" src="grafico_solar/inversor_1.png" alt="Inversor">
+              <img id="inv-f2" src="grafico_solar/inversor_2.png" alt="">
+              <img id="inv-f3" src="grafico_solar/inversor_3.png" alt="">
+            </div>
           </div>
 
           <!-- Baterías (abajo centro) -->
@@ -1777,6 +1797,19 @@
     const img = document.getElementById('batt-img');
     if (img) img.src = 'grafico_solar/baterias_' + battFrame + '.png';
   }, 600);
+
+  // Animación LED inversor: 1→2→3→2 (pulso verde)
+  const INV_SEQ = [0, 1, 2, 1];
+  let invStep = 0;
+  const invImgs = ['inv-f1', 'inv-f2', 'inv-f3'];
+  setInterval(() => {
+    invStep = (invStep + 1) % INV_SEQ.length;
+    const active = INV_SEQ[invStep];
+    invImgs.forEach((id, i) => {
+      const el = document.getElementById(id);
+      if (el) el.style.opacity = i === active ? '1' : '0';
+    });
+  }, 500);
 
   // Redibujar si cambia el tamaño
   window.addEventListener('resize', drawChart);
