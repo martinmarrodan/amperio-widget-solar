@@ -981,6 +981,10 @@
               <path id="def-batt"        d="M 240 237 L 240 375"/>
               <path id="def-batt-right"  d="M 243 233 L 380 233"/>
               <path id="def-batt-up"     d="M 240 375 L 240 237"/>
+              <!-- Clip: oculta todo lo que esté a la derecha del borde izquierdo del inversor (~x=223) -->
+              <clipPath id="clip-house">
+                <rect x="0" y="0" width="223" height="400"/>
+              </clipPath>
               <!-- Gradientes de flujo: x1=cola(transparente) → x2=punta(brillante), en espacio local del elemento -->
               <linearGradient id="grad-green" gradientUnits="userSpaceOnUse" x1="-40" y1="0" x2="4" y2="0">
                 <stop offset="0%"   stop-color="#7ecb35" stop-opacity="0"/>
@@ -1019,24 +1023,24 @@
                 calcMode="linear" keyTimes="0;0.44;0.5;1" values="1;1;0;0"/>
             </g>
 
-            <g id="arr-house-green" style="visibility:hidden">
+            <g id="arr-house-green" style="visibility:hidden" clip-path="url(#clip-house)">
               <rect x="-40" y="-2.5" width="44" height="5" rx="2.5" fill="url(#grad-green)"/>
               <animateMotion dur="5s" repeatCount="indefinite" rotate="auto"
                 calcMode="linear" keyTimes="0;0.5;1" keyPoints="0;0;1">
                 <mpath href="#def-house"/>
               </animateMotion>
               <animate attributeName="opacity" dur="5s" repeatCount="indefinite"
-                calcMode="linear" keyTimes="0;0.5;0.54;0.96;1" values="0;0;1;1;0"/>
+                calcMode="linear" keyTimes="0;0.5;0.52;0.96;1" values="0;0;1;1;0"/>
             </g>
 
-            <g id="arr-house-gray" style="visibility:hidden">
+            <g id="arr-house-gray" style="visibility:hidden" clip-path="url(#clip-house)">
               <rect x="-40" y="-2.5" width="44" height="5" rx="2.5" fill="url(#grad-gray)"/>
               <animateMotion dur="2.5s" repeatCount="indefinite" rotate="auto">
                 <mpath href="#def-house"/>
               </animateMotion>
             </g>
 
-            <g id="arr-house-amber" style="visibility:hidden">
+            <g id="arr-house-amber" style="visibility:hidden" clip-path="url(#clip-house)">
               <rect x="-40" y="-2.5" width="44" height="5" rx="2.5" fill="url(#grad-amber)"/>
               <animateMotion dur="2.5s" repeatCount="indefinite" rotate="auto">
                 <mpath href="#def-house"/>
