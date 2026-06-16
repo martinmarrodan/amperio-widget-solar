@@ -950,28 +950,6 @@
     <div class="panel" id="panel-live">
       <p class="section-label">Simulación en tiempo real</p>
 
-      <!-- Sistema info bar con paneles editables -->
-      <div class="system-info-bar" id="system-info-bar">
-        <div class="sib-item">
-          <input type="number" id="live-paneles" value="8" min="1" max="200" oninput="updateMax()" class="sib-paneles-input"/>
-          <span>paneles</span>
-        </div>
-        <div class="sib-item">Inversor <span class="sib-val" id="sib-inversor">–</span> kW</div>
-        <div class="sib-item"><span class="sib-val" id="sib-fasico">–</span></div>
-        <div class="sib-item"><span class="sib-val" id="sib-sistema">–</span></div>
-        <div class="sib-item"><span class="sib-kwh" id="sib-kwh">–</span> kWh/día est.</div>
-      </div>
-
-      <div class="live-bottom">
-        <div class="chart-wrap">
-          <div class="chart-header">
-            <span class="chart-title">Curva de generación diaria</span>
-            <span class="chart-meta" id="chart-month-label">–</span>
-          </div>
-          <canvas id="solar-chart"></canvas>
-        </div>
-      </div>
-
       <!-- Diagrama de flujo energético -->
       <div class="flow-diagram">
         <div class="flow-inner">
@@ -1102,6 +1080,28 @@
       <div class="power-labels">
         <span>0 kW</span>
         <span id="bar-max-label">máx. – kW</span>
+      </div>
+
+      <!-- Sistema info bar con paneles editables -->
+      <div class="system-info-bar" id="system-info-bar">
+        <div class="sib-item">
+          <input type="number" id="live-paneles" value="8" min="1" max="200" oninput="updateMax()" class="sib-paneles-input"/>
+          <span>paneles</span>
+        </div>
+        <div class="sib-item">Inversor <span class="sib-val" id="sib-inversor">–</span> kW</div>
+        <div class="sib-item"><span class="sib-val" id="sib-fasico">–</span></div>
+        <div class="sib-item"><span class="sib-val" id="sib-sistema">–</span></div>
+        <div class="sib-item"><span class="sib-kwh" id="sib-kwh">–</span> kWh/día est.</div>
+      </div>
+
+      <div class="live-bottom">
+        <div class="chart-wrap">
+          <div class="chart-header">
+            <span class="chart-title">Curva de generación diaria</span>
+            <span class="chart-meta" id="chart-month-label">–</span>
+          </div>
+          <canvas id="solar-chart"></canvas>
+        </div>
       </div>
     </div>
 
