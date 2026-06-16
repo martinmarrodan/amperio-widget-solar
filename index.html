@@ -702,8 +702,17 @@
       width: 7%;
       z-index: 10;
     }
-    .inversor-wrap { width: 100%; }
+    .inversor-wrap { position: relative; width: 100%; }
     .inversor-wrap img { width: 100%; display: block; }
+    #inv-glow {
+      position: absolute; top: 0; left: 0;
+      opacity: 0;
+      animation: inv-pulse 2.5s ease-in-out infinite;
+    }
+    @keyframes inv-pulse {
+      0%, 100% { opacity: 0; }
+      50%       { opacity: 1; }
+    }
 
     .flow-lbl {
       font-size: 9px;
@@ -1077,6 +1086,7 @@
           <div class="flow-node fn-inversor">
             <div class="inversor-wrap">
               <img id="inv-img" src="grafico_solar/inversor_1.png" alt="Inversor">
+              <img id="inv-glow" src="grafico_solar/inversor_3.png" alt="">
             </div>
           </div>
 
@@ -1800,26 +1810,22 @@
     if (img) img.src = 'grafico_solar/baterias_' + battFrame + '.png';
   }, 600);
 
-  // Preload inversor frames para swap instantáneo
-  const invFrames = [1, 2, 3].map(n => { const i = new Image(); i.src = 'grafico_solar/inversor_' + n + '.png'; return i; });
-  const invOffImg = new Image(); invOffImg.src = 'grafico_solar/inversor_off.png';
-  const INV_SEQ = [0, 1, 2, 1]; // 1→2→3→2 (pulso verde)
-  let invStep = 0;
   let invApagado = false;
 
   function setInversorOff(off) {
+    if (invApagado === off) return;
     invApagado = off;
-    const img = document.getElementById('inv-img');
-    if (!img) return;
-    if (off) img.src = invOffImg.src;
+    const base = document.getElementById('inv-img');
+    const glow = document.getElementById('inv-glow');
+    if (!base) return;
+    if (off) {
+      base.src = 'grafico_solar/inversor_off.png';
+      if (glow) { glow.style.animationPlayState = 'paused'; glow.style.opacity = '0'; }
+    } else {
+      base.src = 'grafico_solar/inversor_1.png';
+      if (glow) { glow.style.animationPlayState = 'running'; glow.style.opacity = ''; }
+    }
   }
-
-  setInterval(() => {
-    if (invApagado) return;
-    invStep = (invStep + 1) % INV_SEQ.length;
-    const img = document.getElementById('inv-img');
-    if (img) img.src = invFrames[INV_SEQ[invStep]].src;
-  }, 500);
 
   // Redibujar si cambia el tamaño
   window.addEventListener('resize', drawChart);
