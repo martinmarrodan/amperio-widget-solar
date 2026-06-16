@@ -981,6 +981,19 @@
               <path id="def-batt"        d="M 240 237 L 240 375"/>
               <path id="def-batt-right"  d="M 243 233 L 380 233"/>
               <path id="def-batt-up"     d="M 240 375 L 240 237"/>
+              <!-- Gradientes de flujo: x1=cola(transparente) → x2=punta(brillante), en espacio local del elemento -->
+              <linearGradient id="grad-green" gradientUnits="userSpaceOnUse" x1="-40" y1="0" x2="4" y2="0">
+                <stop offset="0%"   stop-color="#7ecb35" stop-opacity="0"/>
+                <stop offset="100%" stop-color="#c8f53d" stop-opacity="1"/>
+              </linearGradient>
+              <linearGradient id="grad-gray" gradientUnits="userSpaceOnUse" x1="-40" y1="0" x2="4" y2="0">
+                <stop offset="0%"   stop-color="#94a3b8" stop-opacity="0"/>
+                <stop offset="100%" stop-color="#94a3b8" stop-opacity="1"/>
+              </linearGradient>
+              <linearGradient id="grad-amber" gradientUnits="userSpaceOnUse" x1="-40" y1="0" x2="4" y2="0">
+                <stop offset="0%"   stop-color="#f59e0b" stop-opacity="0"/>
+                <stop offset="100%" stop-color="#fbbf24" stop-opacity="1"/>
+              </linearGradient>
             </defs>
 
             <!-- Líneas base (guía siempre visible) — cruz completa -->
@@ -995,58 +1008,66 @@
             <line id="path-batt"  class="flow-seg seg-batt"  x1="240" y1="237" x2="240" y2="375"/>
             <line id="path-batt-right" class="flow-seg seg-batt" x1="243" y1="233" x2="380" y2="233" style="visibility:hidden"/>
 
-            <!-- Flechita solar (baja desde paneles) -->
+            <!-- Streaks de flujo de energía (degradado cola→punta) -->
             <g id="arr-solar" style="visibility:hidden">
-              <polygon points="-3.5,-2 3.5,0 -3.5,2" fill="#7ecb35"/>
-              <animateMotion dur="1.6s" repeatCount="indefinite" rotate="auto">
+              <rect x="-40" y="-2.5" width="44" height="5" rx="2.5" fill="url(#grad-green)"/>
+              <animateMotion dur="2.5s" repeatCount="indefinite" rotate="auto">
                 <mpath href="#def-solar"/>
               </animateMotion>
             </g>
 
-            <!-- Flechita casa (va hacia la casa) -->
-            <g id="arr-house" style="visibility:hidden">
-              <polygon points="-3.5,-2 3.5,0 -3.5,2" fill="#7ecb35"/>
-              <animateMotion dur="1.4s" repeatCount="indefinite" rotate="auto">
+            <g id="arr-house-green" style="visibility:hidden">
+              <rect x="-40" y="-2.5" width="44" height="5" rx="2.5" fill="url(#grad-green)"/>
+              <animateMotion dur="2.5s" repeatCount="indefinite" rotate="auto">
                 <mpath href="#def-house"/>
               </animateMotion>
             </g>
 
-            <!-- Flechita red (viene desde la red) -->
+            <g id="arr-house-gray" style="visibility:hidden">
+              <rect x="-40" y="-2.5" width="44" height="5" rx="2.5" fill="url(#grad-gray)"/>
+              <animateMotion dur="2.5s" repeatCount="indefinite" rotate="auto">
+                <mpath href="#def-house"/>
+              </animateMotion>
+            </g>
+
+            <g id="arr-house-amber" style="visibility:hidden">
+              <rect x="-40" y="-2.5" width="44" height="5" rx="2.5" fill="url(#grad-amber)"/>
+              <animateMotion dur="2.5s" repeatCount="indefinite" rotate="auto">
+                <mpath href="#def-house"/>
+              </animateMotion>
+            </g>
+
             <g id="arr-grid" style="visibility:hidden">
-              <polygon points="-3.5,-2 3.5,0 -3.5,2" fill="#94a3b8"/>
-              <animateMotion dur="1.4s" repeatCount="indefinite" rotate="auto">
+              <rect x="-40" y="-2.5" width="44" height="5" rx="2.5" fill="url(#grad-gray)"/>
+              <animateMotion dur="2.5s" repeatCount="indefinite" rotate="auto">
                 <mpath href="#def-grid"/>
               </animateMotion>
             </g>
 
-            <!-- Flechita baterías (carga desde junction, vertical abajo) -->
             <g id="arr-batt" style="visibility:hidden">
-              <polygon points="-3.5,-2 3.5,0 -3.5,2" fill="#7ecb35"/>
-              <animateMotion dur="1.8s" repeatCount="indefinite" rotate="auto">
+              <rect x="-40" y="-2.5" width="44" height="5" rx="2.5" fill="url(#grad-green)"/>
+              <animateMotion dur="2.5s" repeatCount="indefinite" rotate="auto">
                 <mpath href="#def-batt"/>
               </animateMotion>
             </g>
 
-            <!-- Flechita baterías Off Grid (carga: va hacia la derecha) -->
             <g id="arr-batt-right" style="visibility:hidden">
-              <polygon points="-3.5,-2 3.5,0 -3.5,2" fill="#7ecb35"/>
-              <animateMotion dur="1.4s" repeatCount="indefinite" rotate="auto">
+              <rect x="-40" y="-2.5" width="44" height="5" rx="2.5" fill="url(#grad-green)"/>
+              <animateMotion dur="2.5s" repeatCount="indefinite" rotate="auto">
                 <mpath href="#def-batt-right"/>
               </animateMotion>
             </g>
 
-            <!-- Flechita descarga Off Grid de noche (batería → junction, leftward) -->
             <g id="arr-batt-right-discharge" style="visibility:hidden">
-              <polygon points="-3.5,-2 3.5,0 -3.5,2" fill="#f59e0b"/>
-              <animateMotion dur="1.8s" repeatCount="indefinite" rotate="auto">
+              <rect x="-40" y="-2.5" width="44" height="5" rx="2.5" fill="url(#grad-amber)"/>
+              <animateMotion dur="2.5s" repeatCount="indefinite" rotate="auto">
                 <mpath href="#def-grid"/>
               </animateMotion>
             </g>
 
-            <!-- Flechita descarga Híbrido de noche (batería → junction, upward) -->
             <g id="arr-batt-up" style="visibility:hidden">
-              <polygon points="-3.5,-2 3.5,0 -3.5,2" fill="#f59e0b"/>
-              <animateMotion dur="1.8s" repeatCount="indefinite" rotate="auto">
+              <rect x="-40" y="-2.5" width="44" height="5" rx="2.5" fill="url(#grad-amber)"/>
+              <animateMotion dur="2.5s" repeatCount="indefinite" rotate="auto">
                 <mpath href="#def-batt-up"/>
               </animateMotion>
             </g>
@@ -1714,7 +1735,8 @@
     ['path-solar','path-house','path-grid','path-batt','path-batt-right'].forEach(id => {
       const el = document.getElementById(id); if (el) el.classList.remove('active');
     });
-    ['arr-solar','arr-house','arr-grid','arr-batt','arr-batt-up','arr-batt-right','arr-batt-right-discharge'].forEach(id => {
+    ['arr-solar','arr-house-green','arr-house-gray','arr-house-amber',
+     'arr-grid','arr-batt','arr-batt-up','arr-batt-right','arr-batt-right-discharge'].forEach(id => {
       const el = document.getElementById(id); if (el) el.style.visibility = 'hidden';
     });
 
@@ -1722,6 +1744,11 @@
       const seg = document.getElementById(segId); if (seg) seg.classList.add('active');
       const arr = document.getElementById(arrId);  if (arr) arr.style.visibility = 'visible';
     };
+
+    // Devuelve el ID del streak de casa según el color activo
+    const houseArr = (color) => color === '#94a3b8' ? 'arr-house-gray'
+                              : color === '#f59e0b' ? 'arr-house-amber'
+                              : 'arr-house-green';
 
     let houseColor = '#7ecb35';
     let junctionActive = false;
@@ -1733,11 +1760,11 @@
         casaLuz = false;
         stateText = '⚡ Sin red – sistema apagado';
       } else {
+        houseColor = state === 'night' ? '#94a3b8' : '#7ecb35';
         if (solarOn)    on('path-solar', 'arr-solar');
         if (gridNeeded) on('path-grid',  'arr-grid');
-        on('path-house', 'arr-house');
+        on('path-house', houseArr(houseColor));
         junctionActive = true;
-        houseColor = state === 'night' ? '#94a3b8' : '#7ecb35';
         stateText = state === 'night' ? '🔌 Energía de la red eléctrica'
                   : state === 'mixed' ? '☀️ Solar + red combinados'
                   : '☀️ Solo energía solar';
@@ -1746,23 +1773,23 @@
       if (!gridAvail) {
         if (solarOn) {
           on('path-solar', 'arr-solar');
-          on('path-batt',  'arr-batt');     // carga batería
-          on('path-house', 'arr-house');
+          on('path-batt',  'arr-batt');
+          on('path-house', houseArr(houseColor));
           stateText = '☀️ Solar autónomo – sin red';
         } else {
-          on('path-batt',  'arr-batt-up'); // descarga batería → arriba
-          on('path-house', 'arr-house');
           houseColor = '#f59e0b';
+          on('path-batt',  'arr-batt-up');
+          on('path-house', houseArr(houseColor));
           stateText = '🔋 Baterías – sin red';
         }
         junctionActive = true;
       } else {
+        houseColor = state === 'night' ? '#94a3b8' : '#7ecb35';
         if (solarOn)    on('path-solar', 'arr-solar');
         if (gridNeeded) on('path-grid',  'arr-grid');
         if (solarOn)    on('path-batt',  'arr-batt');
-        on('path-house', 'arr-house');
+        on('path-house', houseArr(houseColor));
         junctionActive = true;
-        houseColor = state === 'night' ? '#94a3b8' : '#7ecb35';
         stateText = state === 'night' ? '🔌 Energía de la red eléctrica'
                   : state === 'mixed' ? '☀️ Solar + red combinados'
                   : '☀️ Solo energía solar';
@@ -1770,13 +1797,13 @@
     } else if (st === 'offgrid') {
       if (solarOn) {
         on('path-solar',      'arr-solar');
-        on('path-batt-right', 'arr-batt-right');  // carga batería → derecha
-        on('path-house',      'arr-house');
+        on('path-batt-right', 'arr-batt-right');
+        on('path-house',      houseArr(houseColor));
         stateText = '☀️ Solo energía solar';
       } else {
-        on('path-batt-right', 'arr-batt-right-discharge'); // descarga batería ← derecha
-        on('path-house',      'arr-house');
         houseColor = '#f59e0b';
+        on('path-batt-right', 'arr-batt-right-discharge');
+        on('path-house',      houseArr(houseColor));
         stateText = '🔋 Baterías – sin red';
       }
       junctionActive = true;
@@ -1784,7 +1811,6 @@
 
     document.getElementById('junction-dot').classList.toggle('active', junctionActive);
     document.getElementById('path-house').style.stroke = houseColor;
-    document.getElementById('arr-house').querySelector('polygon').setAttribute('fill', houseColor);
 
     const casaNode = document.querySelector('.fn-casa');
     if (tipoInstalacion === 'comercial') {
