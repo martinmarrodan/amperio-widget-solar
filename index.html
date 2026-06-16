@@ -1011,16 +1011,22 @@
             <!-- Streaks de flujo de energía (degradado cola→punta) -->
             <g id="arr-solar" style="visibility:hidden">
               <rect x="-40" y="-2.5" width="44" height="5" rx="2.5" fill="url(#grad-green)"/>
-              <animateMotion dur="2.5s" repeatCount="indefinite" rotate="auto">
+              <animateMotion dur="5s" repeatCount="indefinite" rotate="auto"
+                calcMode="linear" keyTimes="0;0.5;1" keyPoints="0;1;1">
                 <mpath href="#def-solar"/>
               </animateMotion>
+              <animate attributeName="opacity" dur="5s" repeatCount="indefinite"
+                calcMode="linear" keyTimes="0;0.44;0.5;1" values="1;1;0;0"/>
             </g>
 
             <g id="arr-house-green" style="visibility:hidden">
               <rect x="-40" y="-2.5" width="44" height="5" rx="2.5" fill="url(#grad-green)"/>
-              <animateMotion dur="2.5s" repeatCount="indefinite" rotate="auto">
+              <animateMotion dur="5s" repeatCount="indefinite" rotate="auto"
+                calcMode="linear" keyTimes="0;0.5;1" keyPoints="0;0;1">
                 <mpath href="#def-house"/>
               </animateMotion>
+              <animate attributeName="opacity" dur="5s" repeatCount="indefinite"
+                calcMode="linear" keyTimes="0;0.5;0.54;0.96;1" values="0;0;1;1;0"/>
             </g>
 
             <g id="arr-house-gray" style="visibility:hidden">
