@@ -1862,10 +1862,10 @@
     if (!base) return;
     if (off) {
       base.src = 'grafico_solar/inversor_off.png';
-      if (glow) { glow.style.animationPlayState = 'paused'; glow.style.opacity = '0'; }
+      if (glow) { glow.style.animation = 'none'; glow.style.opacity = '0'; }
     } else {
       base.src = 'grafico_solar/inversor_1.png';
-      if (glow) { glow.style.animationPlayState = 'running'; glow.style.opacity = ''; }
+      if (glow) { glow.style.animation = ''; glow.style.opacity = ''; }
     }
   }
 
