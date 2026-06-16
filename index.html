@@ -994,19 +994,6 @@
                 <stop offset="0%"   stop-color="#f59e0b" stop-opacity="0"/>
                 <stop offset="100%" stop-color="#fbbf24" stop-opacity="1"/>
               </linearGradient>
-              <!-- Gradientes casa: cola más corta para que al arrancar quede completamente dentro del inversor -->
-              <linearGradient id="grad-house-green" gradientUnits="userSpaceOnUse" x1="-20" y1="0" x2="4" y2="0">
-                <stop offset="0%"   stop-color="#7ecb35" stop-opacity="0"/>
-                <stop offset="100%" stop-color="#c8f53d" stop-opacity="1"/>
-              </linearGradient>
-              <linearGradient id="grad-house-gray" gradientUnits="userSpaceOnUse" x1="-20" y1="0" x2="4" y2="0">
-                <stop offset="0%"   stop-color="#94a3b8" stop-opacity="0"/>
-                <stop offset="100%" stop-color="#94a3b8" stop-opacity="1"/>
-              </linearGradient>
-              <linearGradient id="grad-house-amber" gradientUnits="userSpaceOnUse" x1="-20" y1="0" x2="4" y2="0">
-                <stop offset="0%"   stop-color="#f59e0b" stop-opacity="0"/>
-                <stop offset="100%" stop-color="#fbbf24" stop-opacity="1"/>
-              </linearGradient>
             </defs>
 
             <!-- Líneas base (guía siempre visible) — cruz completa -->
@@ -1033,24 +1020,24 @@
             </g>
 
             <g id="arr-house-green" style="visibility:hidden">
-              <rect x="-40" y="-2.5" width="44" height="5" rx="2.5" fill="url(#grad-house-green)"/>
+              <rect x="-40" y="-2.5" width="44" height="5" rx="2.5" fill="url(#grad-green)"/>
               <animateMotion dur="5s" repeatCount="indefinite" rotate="auto"
                 calcMode="linear" keyTimes="0;0.5;1" keyPoints="0;0;1">
                 <mpath href="#def-house"/>
               </animateMotion>
               <animate attributeName="opacity" dur="5s" repeatCount="indefinite"
-                calcMode="linear" keyTimes="0;0.49;0.5;1" values="0;0;1;1"/>
+                calcMode="linear" keyTimes="0;0.5;0.6;1" values="0;0;1;1"/>
             </g>
 
             <g id="arr-house-gray" style="visibility:hidden">
-              <rect x="-40" y="-2.5" width="44" height="5" rx="2.5" fill="url(#grad-house-gray)"/>
+              <rect x="-40" y="-2.5" width="44" height="5" rx="2.5" fill="url(#grad-gray)"/>
               <animateMotion dur="2.5s" repeatCount="indefinite" rotate="auto">
                 <mpath href="#def-house"/>
               </animateMotion>
             </g>
 
             <g id="arr-house-amber" style="visibility:hidden">
-              <rect x="-40" y="-2.5" width="44" height="5" rx="2.5" fill="url(#grad-house-amber)"/>
+              <rect x="-40" y="-2.5" width="44" height="5" rx="2.5" fill="url(#grad-amber)"/>
               <animateMotion dur="2.5s" repeatCount="indefinite" rotate="auto">
                 <mpath href="#def-house"/>
               </animateMotion>
