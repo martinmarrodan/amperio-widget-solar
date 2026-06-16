@@ -1160,8 +1160,11 @@
 
   function onGridToggle() {
     const on = document.getElementById('grid-toggle').checked;
+    const st = document.getElementById('sistema-tipo')?.value || 'ongrid';
     document.getElementById('red-img').style.opacity = on ? '1' : '0.3';
     document.getElementById('grid-toggle-lbl').textContent = on ? 'ON' : 'OFF';
+    // On Grid sin red → inversor apagado
+    setInversorOff(st === 'ongrid' && !on);
     updateFlowDiagram(getLivePower(), getMaxKw());
   }
 
@@ -1172,6 +1175,8 @@
     const baseBattV = document.getElementById('base-batt-v');
 
     const gridToggleWrap = document.querySelector('.fn-red .grid-toggle');
+    const gridOn = document.getElementById('grid-toggle')?.checked !== false;
+    setInversorOff(st === 'ongrid' && !gridOn);
 
     if (st === 'ongrid') {
       fnBatt.style.display = 'none';
@@ -1797,9 +1802,20 @@
 
   // Preload inversor frames para swap instantáneo
   const invFrames = [1, 2, 3].map(n => { const i = new Image(); i.src = 'grafico_solar/inversor_' + n + '.png'; return i; });
+  const invOffImg = new Image(); invOffImg.src = 'grafico_solar/inversor_off.png';
   const INV_SEQ = [0, 1, 2, 1]; // 1→2→3→2 (pulso verde)
   let invStep = 0;
+  let invApagado = false;
+
+  function setInversorOff(off) {
+    invApagado = off;
+    const img = document.getElementById('inv-img');
+    if (!img) return;
+    if (off) img.src = invOffImg.src;
+  }
+
   setInterval(() => {
+    if (invApagado) return;
     invStep = (invStep + 1) % INV_SEQ.length;
     const img = document.getElementById('inv-img');
     if (img) img.src = invFrames[INV_SEQ[invStep]].src;
