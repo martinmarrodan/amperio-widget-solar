@@ -868,22 +868,6 @@
           </div>
 
           <div class="form-group">
-            <label>Provincia / zona solar</label>
-            <div class="select-wrap">
-              <select id="zona">
-                <option value="1.0">Buenos Aires</option>
-                <option value="1.1">CABA</option>
-                <option value="1.15">Córdoba</option>
-                <option value="1.2">Mendoza</option>
-                <option value="1.25">Salta / Jujuy</option>
-                <option value="1.3">San Luis / La Rioja</option>
-                <option value="0.85">Patagonia</option>
-                <option value="0.8">Tierra del Fuego</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-group">
             <label>Tipo de instalación</label>
             <div class="select-wrap">
               <select id="tipo">
@@ -900,16 +884,6 @@
                 <option value="ongrid">On Grid</option>
                 <option value="hibrido">Híbrido</option>
                 <option value="offgrid">Off Grid</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-group" id="grupo-red">
-            <label>Tipo de red</label>
-            <div class="select-wrap">
-              <select id="red-tipo">
-                <option value="monofasica">Monofásica</option>
-                <option value="trifasica">Trifásica</option>
               </select>
             </div>
           </div>
@@ -944,7 +918,6 @@
             <div id="res-sistema-bar" class="res-sistema-bar result-hidden">
               <span class="rsb-item" id="rsb-paneles">–</span>
               <span class="rsb-item" id="rsb-inversor">–</span>
-              <span class="rsb-item" id="rsb-fasico">–</span>
               <span class="rsb-item" id="rsb-sistema">–</span>
               <span class="rsb-item" id="rsb-kwh">–</span>
             </div>
@@ -1153,7 +1126,6 @@
           <span>paneles</span>
         </div>
         <div class="sib-item">Inversor <span class="sib-val" id="sib-inversor">–</span> kW</div>
-        <div class="sib-item"><span class="sib-val" id="sib-fasico">–</span></div>
         <div class="sib-item"><span class="sib-val" id="sib-sistema">–</span></div>
         <div class="sib-item"><span class="sib-kwh" id="sib-kwh">–</span> kWh/día est.</div>
       </div>
@@ -1200,8 +1172,6 @@
   }
 
   function toggleRedTipo() {
-    const st = document.getElementById('sistema-tipo').value;
-    document.getElementById('grupo-red').style.display = st === 'offgrid' ? 'none' : '';
     applySistemaDiagram();
   }
 
@@ -1266,7 +1236,7 @@
     return total;
   }
 
-  function updateSystemInfoBar(paneles, inversorKw, fasico, sistemaNombre) {
+  function updateSystemInfoBar(paneles, inversorKw, sistemaNombre) {
     const month = new Date().getMonth();
     const maxKw = paneles * 0.55;
     const kwh = calcDailyKwh(maxKw, month).toFixed(1);
@@ -1274,7 +1244,6 @@
     // Live tab bar
     document.getElementById('live-paneles').value = paneles;
     document.getElementById('sib-inversor').textContent = inversorKw;
-    document.getElementById('sib-fasico').textContent = fasico;
     document.getElementById('sib-sistema').textContent = sistemaNombre;
     document.getElementById('sib-kwh').textContent = '~' + kwh;
 
@@ -1283,7 +1252,6 @@
     if (rbar) {
       document.getElementById('rsb-paneles').textContent = paneles + ' paneles';
       document.getElementById('rsb-inversor').textContent = 'Inversor ' + inversorKw + ' kW';
-      document.getElementById('rsb-fasico').textContent = fasico;
       document.getElementById('rsb-sistema').textContent = sistemaNombre;
       document.getElementById('rsb-kwh').textContent = '~' + kwh + ' kWh/día';
       rbar.classList.remove('result-hidden');
@@ -1292,10 +1260,9 @@
 
   function calcular() {
     const consumo = parseFloat(document.getElementById('consumo').value) || 350;
-    const factor = parseFloat(document.getElementById('zona').value);
     // Factor estacional promedio anual (para dimensionar el sistema para todo el año)
     const avgSeasonFactor = MONTH_FACTOR.reduce((a, b) => a + b, 0) / MONTH_FACTOR.length;
-    const hps = 4.0 * factor * avgSeasonFactor;
+    const hps = 4.0 * avgSeasonFactor;
     const kwPorPanel = 0.55 * hps * 30 * 0.80;
     const paneles = Math.ceil(consumo / kwPorPanel);
     const potenciaKw = (paneles * 0.55).toFixed(1);
@@ -1308,10 +1275,7 @@
     const kWpTotal = paneles * 0.55;
     const inversorKw = INVERTER_SIZES.find(s => s >= kWpTotal * 0.9) || 50;
 
-    // Mono/trifásico: Off Grid siempre monofásico
     const sistemaTipo = document.getElementById('sistema-tipo').value;
-    const redTipo = document.getElementById('red-tipo').value;
-    const fasico = (sistemaTipo === 'offgrid' || redTipo === 'monofasica') ? 'Monofásico' : 'Trifásico';
     const sistemaNombre = { ongrid: 'On Grid', hibrido: 'Híbrido', offgrid: 'Off Grid' }[sistemaTipo];
 
     document.getElementById('res-paneles').textContent = paneles;
@@ -1325,7 +1289,7 @@
     tipoInstalacion = document.getElementById('tipo').value;
     energyToday = 0;
     updateMax();
-    updateSystemInfoBar(paneles, inversorKw, fasico, sistemaNombre);
+    updateSystemInfoBar(paneles, inversorKw, sistemaNombre);
     applySistemaDiagram();
 
     const el = document.getElementById('resultado');
@@ -1873,8 +1837,6 @@
   window.addEventListener('resize', drawChart);
 
   updateMax();
-  // Default system info labels for On Grid / Monofásico
-  document.getElementById('sib-fasico').textContent = 'Monofásico';
   document.getElementById('sib-sistema').textContent = 'On Grid';
   fetchSunTimes();
   setInterval(tickLive, 2000);
