@@ -1812,22 +1812,31 @@
     panelFrames.push(pre);
   }
 
-  // Animación de flare de paneles solares — aceleración progresiva (siempre avanza)
+  // Animación de flare de paneles solares — aceleración progresiva con pausa entre ciclos
   let panelPos = 1.0;
   let panelSpd = 0.5;
   const PANEL_SPD_INC = 0.1;
+  let panelPause = 0;
+  const PANEL_PAUSE_TICKS = 18; // 18 * 80ms ≈ 1.4s de pausa entre ciclos
   let solarActive = false;
   setInterval(() => {
     const img = document.getElementById('paneles-img');
     if (!img) return;
     if (!solarActive) {
-      panelPos = 1.0; panelSpd = 0.5;
+      panelPos = 1.0; panelSpd = 0.5; panelPause = 0;
+      img.src = panelFrames[0].src;
+      return;
+    }
+    if (panelPause > 0) {
+      panelPause--;
       img.src = panelFrames[0].src;
       return;
     }
     panelSpd += PANEL_SPD_INC;
     panelPos += panelSpd;
-    if (panelPos > 240) { panelPos = 1.0; panelSpd = 0.5; }
+    if (panelPos > 240) {
+      panelPos = 1.0; panelSpd = 0.5; panelPause = PANEL_PAUSE_TICKS;
+    }
     const frame = Math.min(239, Math.max(0, Math.round(panelPos) - 1));
     img.src = panelFrames[frame].src;
   }, 80);
