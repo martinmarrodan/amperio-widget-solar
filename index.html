@@ -688,7 +688,7 @@
     .fn-paneles { left: 50%; transform: translateX(-50%); top: 0; width: 22%; }
 
     /* Casa: abajo izquierda */
-    .fn-casa { left: 1%; top: 43.5%; width: 20%; }
+    .fn-casa { left: 1%; top: 43.5%; width: 18%; }
 
     /* Red: abajo derecha */
     .fn-red { right: 3.5%; top: 43.5%; width: 20%; }
@@ -1788,8 +1788,8 @@
       document.getElementById('casa-img-noluz').src = 'grafico_solar/casa_sin_luz.png';
       document.getElementById('casa-img-noluz').style.opacity = casaLuz ? '0' : '1';
       document.getElementById('casa-lbl').textContent = 'Tu hogar';
-      casaNode.style.width = '20%';
-      casaNode.style.left = '5%';
+      casaNode.style.width = '18%';
+      casaNode.style.left = '1%';
     }
     document.getElementById('flow-kw-badge').textContent = power.toFixed(2) + ' kW';
     document.getElementById('flow-state-label').textContent = stateText;
