@@ -476,7 +476,35 @@
       font-size: 14px;
     }
     .system-info-bar .sib-val { color: var(--text); }
-    .system-info-bar .sib-kwh { color: var(--green-dark); }
+
+    .kwh-day-card {
+      margin-top: 16px;
+      background: var(--green-light);
+      border: 1.5px solid var(--green-sage);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      text-align: center;
+    }
+    .kwh-day-value {
+      font-size: 30px;
+      font-weight: 800;
+      color: var(--green-dark);
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+    .kwh-day-unit {
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .kwh-day-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--gray);
+      margin-top: 5px;
+    }
+
     /* Toggle de red eléctrica */
     .grid-toggle {
       display: flex;
@@ -1131,7 +1159,11 @@
         </div>
         <div class="sib-item">Inversor <span class="sib-val" id="sib-inversor">–</span> kW</div>
         <div class="sib-item"><span class="sib-val" id="sib-sistema">–</span></div>
-        <div class="sib-item"><span class="sib-kwh" id="sib-kwh">–</span> kWh/día est.</div>
+      </div>
+
+      <div class="kwh-day-card">
+        <div class="kwh-day-value"><span id="sib-kwh">–</span> <span class="kwh-day-unit">kWh</span></div>
+        <div class="kwh-day-label">Generación estimada / día</div>
       </div>
 
       <div class="live-bottom">
