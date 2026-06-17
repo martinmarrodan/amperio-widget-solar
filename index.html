@@ -1804,21 +1804,23 @@
     if (img) img.src = 'grafico_solar/baterias_' + battFrame + '.png';
   }, 600);
 
-  // Animación de flare de paneles solares — ease-in: arranca lento, termina rápido
-  let panelTick = 0;
-  const PANEL_TICKS = 100; // 100 * 80ms = 8s por ciclo
+  // Animación de flare de paneles solares — aceleración progresiva (siempre avanza)
+  let panelPos = 1.0;   // posición fraccionaria en los 240 frames
+  let panelSpd = 0.5;   // velocidad inicial (frames/tick)
+  const PANEL_SPD_INC = 0.1;  // incremento de velocidad por tick
   let solarActive = false;
   setInterval(() => {
     const img = document.getElementById('paneles-img');
     if (!img) return;
     if (!solarActive) {
-      panelTick = 0;
+      panelPos = 1.0; panelSpd = 0.5;
       img.src = 'grafico_solar/paneles-carga-frame001.png';
       return;
     }
-    panelTick = (panelTick + 1) % PANEL_TICKS;
-    const t = panelTick / PANEL_TICKS;
-    const frame = Math.min(240, Math.max(1, Math.ceil(t * t * 240)));
+    panelSpd += PANEL_SPD_INC;
+    panelPos += panelSpd;
+    if (panelPos > 240) { panelPos = 1.0; panelSpd = 0.5; }
+    const frame = Math.min(240, Math.max(1, Math.round(panelPos)));
     img.src = 'grafico_solar/paneles-carga-frame' + String(frame).padStart(3, '0') + '.png';
   }, 80);
 
