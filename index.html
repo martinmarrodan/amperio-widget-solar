@@ -1056,7 +1056,7 @@
 
           <!-- Paneles (arriba centro) -->
           <div class="flow-node fn-paneles">
-            <img src="grafico_solar/paneles_solares.png" alt="Paneles solares">
+            <img id="paneles-img" src="grafico_solar/panel_solar_0.png" alt="Paneles solares">
             <div class="flow-kw-badge" id="flow-kw-badge">– kW</div>
             <span class="flow-lbl">Paneles solares</span>
           </div>
@@ -1801,6 +1801,14 @@
     battFrame = (battFrame + 1) % 4;
     const img = document.getElementById('batt-img');
     if (img) img.src = 'grafico_solar/baterias_' + battFrame + '.png';
+  }, 600);
+
+  // Animación de flare de paneles solares (cicla los 5 frames)
+  let panelFrame = 0;
+  setInterval(() => {
+    panelFrame = (panelFrame + 1) % 5;
+    const img = document.getElementById('paneles-img');
+    if (img) img.src = 'grafico_solar/panel_solar_' + panelFrame + '.png';
   }, 600);
 
   let invApagado = false;
