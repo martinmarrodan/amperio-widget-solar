@@ -1056,7 +1056,7 @@
 
           <!-- Paneles (arriba centro) -->
           <div class="flow-node fn-paneles">
-            <img id="paneles-img" src="grafico_solar/paneles-carga-frame001.png" alt="Paneles solares">
+            <video id="paneles-video" src="grafico_solar/paneles-flare.mp4" muted playsinline preload="auto" loop style="width:100%;display:block;"></video>
             <div class="flow-kw-badge" id="flow-kw-badge">– kW</div>
             <span class="flow-lbl">Paneles solares</span>
           </div>
@@ -1804,17 +1804,21 @@
     if (img) img.src = 'grafico_solar/baterias_' + battFrame + '.png';
   }, 600);
 
-  // Panel flare: animated WebP (hardware-decoded, sin flicker en mobile)
+  // Panel flare: video MP4 (hardware-decoded, sin flicker en mobile)
   let solarActive = false;
   let prevSolarActive = null;
+  const panelVideo = document.getElementById('paneles-video');
   setInterval(() => {
     if (solarActive === prevSolarActive) return;
     prevSolarActive = solarActive;
-    const img = document.getElementById('paneles-img');
-    if (!img) return;
-    img.src = solarActive
-      ? 'grafico_solar/paneles-flare.png'
-      : 'grafico_solar/paneles-carga-frame001.png';
+    if (!panelVideo) return;
+    if (solarActive) {
+      panelVideo.currentTime = 0;
+      panelVideo.play().catch(() => {});
+    } else {
+      panelVideo.pause();
+      panelVideo.currentTime = 0;
+    }
   }, 200);
 
   let invApagado = false;
