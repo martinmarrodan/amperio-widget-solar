@@ -1805,7 +1805,7 @@
     if (img) img.src = 'grafico_solar/baterias_' + battFrame + '.png';
   }, 600);
 
-  // Panel flare: WebP animado a 30fps (frames 60-240)
+  // Panel flare: APNG con aceleración progresiva
   let solarActive = false;
   let prevSolarActive = null;
   setInterval(() => {
@@ -1813,7 +1813,7 @@
     prevSolarActive = solarActive;
     const img = document.getElementById('paneles-img');
     if (img) img.src = solarActive
-      ? 'grafico_solar/paneles-flare.webp'
+      ? 'grafico_solar/paneles-flare.png'
       : 'grafico_solar/paneles-carga-frame001.png';
   }, 200);
 
