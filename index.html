@@ -944,15 +944,15 @@
               <path id="def-batt-right"  d="M 243 233 L 380 233"/>
               <path id="def-batt-up"     d="M 240 375 L 240 237"/>
               <!-- Gradientes de flujo: x1=cola(transparente) → x2=punta(brillante), en espacio local del elemento -->
-              <linearGradient id="grad-green" gradientUnits="userSpaceOnUse" x1="-40" y1="0" x2="4" y2="0">
+              <linearGradient id="grad-green" gradientUnits="userSpaceOnUse" x1="-24" y1="0" x2="4" y2="0">
                 <stop offset="0%"   stop-color="#7ecb35" stop-opacity="0"/>
                 <stop offset="100%" stop-color="#c8f53d" stop-opacity="1"/>
               </linearGradient>
-              <linearGradient id="grad-gray" gradientUnits="userSpaceOnUse" x1="-40" y1="0" x2="4" y2="0">
+              <linearGradient id="grad-gray" gradientUnits="userSpaceOnUse" x1="-24" y1="0" x2="4" y2="0">
                 <stop offset="0%"   stop-color="#94a3b8" stop-opacity="0"/>
                 <stop offset="100%" stop-color="#94a3b8" stop-opacity="1"/>
               </linearGradient>
-              <linearGradient id="grad-amber" gradientUnits="userSpaceOnUse" x1="-40" y1="0" x2="4" y2="0">
+              <linearGradient id="grad-amber" gradientUnits="userSpaceOnUse" x1="-24" y1="0" x2="4" y2="0">
                 <stop offset="0%"   stop-color="#f59e0b" stop-opacity="0"/>
                 <stop offset="100%" stop-color="#fbbf24" stop-opacity="1"/>
               </linearGradient>
@@ -972,7 +972,7 @@
 
             <!-- Streaks de flujo de energía (degradado cola→punta) -->
             <g id="arr-solar" style="visibility:hidden">
-              <rect x="-40" y="-2.5" width="44" height="5" rx="2.5" fill="url(#grad-green)"/>
+              <rect x="-24" y="-2.5" width="28" height="5" rx="2.5" fill="url(#grad-green)"/>
               <animateMotion dur="5s" repeatCount="indefinite" rotate="auto"
                 calcMode="linear" keyTimes="0;0.5;1" keyPoints="0;1;1">
                 <mpath href="#def-solar"/>
@@ -982,7 +982,7 @@
             </g>
 
             <g id="arr-house-green" style="visibility:hidden">
-              <rect x="-40" y="-2.5" width="44" height="5" rx="2.5" fill="url(#grad-green)"/>
+              <rect x="-24" y="-2.5" width="28" height="5" rx="2.5" fill="url(#grad-green)"/>
               <animateMotion dur="5s" repeatCount="indefinite" rotate="auto"
                 calcMode="linear" keyTimes="0;0.5;1" keyPoints="0;0;1">
                 <mpath href="#def-house"/>
@@ -992,7 +992,7 @@
             </g>
 
             <g id="arr-house-gray" style="visibility:hidden">
-              <rect x="-40" y="-2.5" width="44" height="5" rx="2.5" fill="url(#grad-gray)"/>
+              <rect x="-24" y="-2.5" width="28" height="5" rx="2.5" fill="url(#grad-gray)"/>
               <animateMotion dur="2.5s" repeatCount="indefinite" rotate="auto">
                 <mpath href="#def-house"/>
               </animateMotion>
@@ -1001,7 +1001,7 @@
             </g>
 
             <g id="arr-house-amber" style="visibility:hidden">
-              <rect x="-40" y="-2.5" width="44" height="5" rx="2.5" fill="url(#grad-amber)"/>
+              <rect x="-24" y="-2.5" width="28" height="5" rx="2.5" fill="url(#grad-amber)"/>
               <animateMotion dur="2.5s" repeatCount="indefinite" rotate="auto">
                 <mpath href="#def-house"/>
               </animateMotion>
@@ -1010,7 +1010,7 @@
             </g>
 
             <g id="arr-grid" style="visibility:hidden">
-              <rect x="-40" y="-2.5" width="44" height="5" rx="2.5" fill="url(#grad-gray)"/>
+              <rect x="-24" y="-2.5" width="28" height="5" rx="2.5" fill="url(#grad-gray)"/>
               <animateMotion dur="3.2s" repeatCount="indefinite" rotate="auto">
                 <mpath href="#def-grid"/>
               </animateMotion>
@@ -1019,21 +1019,21 @@
             </g>
 
             <g id="arr-batt" style="visibility:hidden">
-              <rect x="-40" y="-2.5" width="44" height="5" rx="2.5" fill="url(#grad-green)"/>
+              <rect x="-24" y="-2.5" width="28" height="5" rx="2.5" fill="url(#grad-green)"/>
               <animateMotion dur="2.5s" repeatCount="indefinite" rotate="auto">
                 <mpath href="#def-batt"/>
               </animateMotion>
             </g>
 
             <g id="arr-batt-right" style="visibility:hidden">
-              <rect x="-40" y="-2.5" width="44" height="5" rx="2.5" fill="url(#grad-green)"/>
+              <rect x="-24" y="-2.5" width="28" height="5" rx="2.5" fill="url(#grad-green)"/>
               <animateMotion dur="2.5s" repeatCount="indefinite" rotate="auto">
                 <mpath href="#def-batt-right"/>
               </animateMotion>
             </g>
 
             <g id="arr-batt-right-discharge" style="visibility:hidden">
-              <rect x="-40" y="-2.5" width="44" height="5" rx="2.5" fill="url(#grad-amber)"/>
+              <rect x="-24" y="-2.5" width="28" height="5" rx="2.5" fill="url(#grad-amber)"/>
               <animateMotion dur="3.2s" repeatCount="indefinite" rotate="auto">
                 <mpath href="#def-grid"/>
               </animateMotion>
@@ -1042,7 +1042,7 @@
             </g>
 
             <g id="arr-batt-up" style="visibility:hidden">
-              <rect x="-40" y="-2.5" width="44" height="5" rx="2.5" fill="url(#grad-amber)"/>
+              <rect x="-24" y="-2.5" width="28" height="5" rx="2.5" fill="url(#grad-amber)"/>
               <animateMotion dur="2.5s" repeatCount="indefinite" rotate="auto">
                 <mpath href="#def-batt-up"/>
               </animateMotion>
