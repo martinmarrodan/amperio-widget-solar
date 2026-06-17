@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 807.33 725.97">
+  <!-- Generator: Adobe Illustrator 30.5.1, SVG Export Plug-In . SVG Version: 2.1.4 Build 3)  -->
+  <defs>
+    <style>
+      .st0, .st1, .st2, .st3, .st4, .st5 {
+        fill: none;
+      }
+
+      .st1 {
+        stroke: #6e7c92;
+        stroke-opacity: .8;
+        stroke-width: 1.2px;
+      }
+
+      .st1, .st2, .st3 {
+        stroke-miterlimit: 4;
+      }
+
+      .st1, .st2, .st3, .st5 {
+        stroke-linecap: round;
+      }
+
+      .st6 {
+        fill: #4fae3a;
+        fill-opacity: .6;
+      }
+
+      .st7 {
+        fill: #5d5e5e;
+        font-family: Nexa-Bold, 'Nexa Bold';
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .st8 {
+        fill: #9aa3b8;
+      }
+
+      .st2 {
+        stroke-width: 2.6px;
+      }
+
+      .st2, .st3 {
+        stroke: #9aa3b8;
+      }
+
+      .st3 {
+        stroke-width: 3px;
+      }
+
+      .st9 {
+        fill: #d2d7e4;
+      }
+
+      .st10 {
+        fill: #d3d8e6;
+      }
+
+      .st11 {
+        clip-path: url(#clippath-1);
+      }
+
+      .st12 {
+        clip-path: url(#clippath-2);
+      }
+
+      .st13 {
+        fill: #a6aec2;
+      }
+
+      .st14 {
+        fill: #9aa2b6;
+      }
+
+      .st15 {
+        fill: #c9d0df;
+      }
+
+      .st16 {
+        fill: #c2c8d8;
+      }
+
+      .st4 {
+        stroke-linejoin: round;
+        stroke-width: 1.5px;
+      }
+
+      .st4, .st5 {
+        stroke: #9aa2b6;
+      }
+
+      .st17 {
+        fill: #e6eaf3;
+      }
+
+      .st18 {
+        fill: #b8c0d2;
+      }
+
+      .st19 {
+        fill: #b9c0d2;
+      }
+
+      .st20 {
+        fill: #cad0de;
+      }
+
+      .st5 {
+        stroke-miterlimit: 5;
+        stroke-opacity: .6;
+        stroke-width: 1.75px;
+      }
+
+      .st21 {
+        fill: #e3e7f1;
+      }
+
+      .st22 {
+        fill: #c3c9d8;
+      }
+
+      .st23 {
+        fill: #5fbe46;
+      }
+
+      .st24 {
+        clip-path: url(#clippath);
+      }
+    </style>
+    <clipPath id="clippath">
+      <path class="st0" d="M211.29,173.19c55.2-32.61,110.39-65.21,165.59-97.82l280.48,58.16c-55.2,32.61-110.39,65.21-165.59,97.82v474.03h-196.32V240.75l-84.16-67.56Z"/>
+    </clipPath>
+    <clipPath id="clippath-1">
+      <ellipse class="st0" cx="434.75" cy="386.42" rx="283.45" ry="326.15"/>
+    </clipPath>
+    <clipPath id="clippath-2">
+      <rect class="st0" x="186.67" width="467.76" height="725.97"/>
+    </clipPath>
+  </defs>
+  <g>
+    <g class="st24">
+      <g class="st11">
+        <g class="st12">
+          <g>
+            <g>
+              <path class="st1" d="M453.11,106.32c-117.38,12.26-234.75-17.52-352.13-89.35"/>
+              <path class="st1" d="M402.92,135.22c-117.38,12.26-234.75-17.52-352.13-89.35"/>
+              <path class="st1" d="M352.73,164.13C235.35,176.39,117.98,146.61.6,74.78"/>
+            </g>
+            <polygon class="st20" points="402.92 650.27 448.43 676.55 448.43 634.51 402.92 608.23 402.92 650.27"/>
+            <polygon class="st19" points="448.43 676.55 402.92 702.83 402.92 660.78 448.43 634.51 448.43 676.55"/>
+            <polygon class="st21" points="402.92 608.23 448.43 634.51 402.92 660.78 357.4 634.51 402.92 608.23"/>
+            <polygon class="st10" points="402.92 625.31 418.84 634.51 415.66 133.38 406.1 127.86 402.92 625.31"/>
+            <polygon class="st22" points="418.84 634.51 402.92 643.7 399.74 142.58 415.66 133.38 418.84 634.51"/>
+            <polygon class="st21" points="402.92 129.7 412.48 135.22 402.92 140.74 393.35 135.22 402.92 129.7"/>
+            <polygon class="st15" points="464.36 115.51 478.02 123.4 341.48 202.23 327.82 194.35 464.36 115.51"/>
+            <polygon class="st18" points="464.36 128.65 478.02 136.54 478.02 123.4 464.36 115.51 464.36 128.65"/>
+            <polygon class="st13" points="478.02 136.54 341.48 215.37 341.48 202.23 478.02 123.4 478.02 136.54"/>
+            <polygon class="st15" points="446.15 178.58 459.81 186.46 359.69 244.28 346.03 236.39 446.15 178.58"/>
+            <polygon class="st18" points="446.15 191.72 459.81 199.6 459.81 186.46 446.15 178.58 446.15 191.72"/>
+            <polygon class="st13" points="459.81 199.6 359.69 257.41 359.69 244.28 459.81 186.46 459.81 199.6"/>
+            <line class="st3" x1="452.98" y1="129.97" x2="452.98" y2="111.57"/>
+            <circle class="st8" cx="452.98" cy="106.32" r="9.46"/>
+            <line class="st3" x1="402.92" y1="158.87" x2="402.92" y2="140.48"/>
+            <circle class="st8" cx="402.92" cy="135.22" r="9.46"/>
+            <line class="st3" x1="352.86" y1="187.78" x2="352.86" y2="169.38"/>
+            <circle class="st8" cx="352.86" cy="164.13" r="9.46"/>
+            <line class="st2" x1="439.34" y1="190.41" x2="439.34" y2="174.64"/>
+            <circle class="st8" cx="439.34" cy="169.38" r="7.88"/>
+            <line class="st2" x1="366.5" y1="232.45" x2="366.5" y2="216.68"/>
+            <circle class="st8" cx="366.5" cy="211.43" r="7.88"/>
+            <path class="st1" d="M352.73,165.86c104.57,60.23,221.09,80.14,349.56,59.75"/>
+            <path class="st1" d="M402.18,137.91c107.75,54.33,225.2,67.75,352.34,40.26"/>
+            <path class="st1" d="M453.11,107.08c109.75,50.17,227.63,59.09,353.62,26.75"/>
+          </g>
+        </g>
+      </g>
+    </g>
+    <g>
+      <polygon class="st9" points="236.21 549.47 200.29 570.22 200.29 450.32 236.21 429.57 236.21 549.47"/>
+      <polygon class="st16" points="132.38 531.03 200.29 570.22 200.29 450.32 132.38 411.12 132.38 531.03"/>
+      <polygon class="st17" points="168.33 390.37 236.21 429.57 200.29 450.32 132.38 411.12 168.33 390.37"/>
+      <polygon class="st23" points="144.37 454.93 188.3 480.3 188.3 521.8 144.37 496.44 144.37 454.93"/>
+      <polygon class="st6" points="144.37 454.93 188.3 480.3 188.3 494.13 144.37 468.77 144.37 454.93"/>
+      <polygon class="st4" points="144.37 454.93 188.3 480.3 188.3 521.8 144.37 496.44 144.37 454.93"/>
+      <circle class="st14" cx="154.36" cy="516.04" r="4.15"/>
+      <line class="st5" x1="148.36" y1="521.8" x2="184.31" y2="542.56"/>
+    </g>
+  </g>
+  <text class="st7" transform="translate(130.79 374.31)"><tspan x="0" y="0">MEDIDOR DE RED </tspan></text>
+</svg>
