@@ -1816,8 +1816,9 @@
   const panelCtx = panelCanvas ? panelCanvas.getContext('2d') : null;
   function drawPanelFrame(idx) {
     if (!panelCtx) return;
-    panelCtx.clearRect(0, 0, panelCanvas.width, panelCanvas.height);
+    panelCtx.globalCompositeOperation = 'copy';
     panelCtx.drawImage(panelFrames[idx], 0, 0, panelCanvas.width, panelCanvas.height);
+    panelCtx.globalCompositeOperation = 'source-over';
   }
   // Dibujar frame inicial
   panelFrames[0].onload = () => drawPanelFrame(0);
