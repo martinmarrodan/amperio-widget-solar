@@ -1692,6 +1692,7 @@
     const gridNeeded = state !== 'solar';
     const st = (document.getElementById('sistema-tipo')?.value) || 'ongrid';
     const gridAvail = document.getElementById('grid-toggle')?.checked !== false;
+    solarActive = solarOn && !(st === 'ongrid' && !gridAvail);
 
     // Reset all segments and arrows
     ['path-solar','path-house','path-grid','path-batt','path-batt-right'].forEach(id => {
@@ -1803,12 +1804,19 @@
     if (img) img.src = 'grafico_solar/baterias_' + battFrame + '.png';
   }, 600);
 
-  // Animación de flare de paneles solares (cicla 240 frames)
+  // Animación de flare de paneles solares (cicla 240 frames, solo cuando hay sol)
   let panelFrame = 1;
+  let solarActive = false;
   setInterval(() => {
-    panelFrame = panelFrame >= 240 ? 1 : panelFrame + 1;
     const img = document.getElementById('paneles-img');
-    if (img) img.src = 'grafico_solar/paneles-carga-frame' + String(panelFrame).padStart(3, '0') + '.png';
+    if (!img) return;
+    if (!solarActive) {
+      panelFrame = 1;
+      img.src = 'grafico_solar/paneles-carga-frame001.png';
+      return;
+    }
+    panelFrame = panelFrame >= 240 ? 1 : panelFrame + 1;
+    img.src = 'grafico_solar/paneles-carga-frame' + String(panelFrame).padStart(3, '0') + '.png';
   }, 80);
 
   let invApagado = false;
