@@ -685,7 +685,7 @@
     #casa-img-noluz { opacity: 0; transition: opacity 0.25s; }
 
     /* Paneles: arriba centro */
-    .fn-paneles { left: 50%; transform: translateX(-50%); top: 0; width: 22%; will-change: transform; }
+    .fn-paneles { left: 50%; transform: translateX(-50%) translateZ(0); top: 0; width: 22%; will-change: transform; }
 
     /* Casa: abajo izquierda */
     .fn-casa { left: 5%; top: 43.5%; width: 18%; will-change: transform; }
@@ -935,7 +935,7 @@
       <div class="flow-diagram">
         <div class="flow-inner">
 
-          <svg class="flow-svg" viewBox="0 0 480 400" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <svg class="flow-svg" viewBox="0 0 480 400" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" style="will-change:transform;transform:translateZ(0)">
             <defs>
               <path id="def-solar"       d="M 240 88 L 240 229"/>
               <path id="def-house"       d="M 237 233 L 100 233"/>
@@ -1056,7 +1056,7 @@
 
           <!-- Paneles (arriba centro) -->
           <div class="flow-node fn-paneles">
-            <video id="paneles-video" src="grafico_solar/paneles-flare.mp4" muted playsinline preload="auto" loop style="width:100%;display:block;"></video>
+            <img id="paneles-img" src="grafico_solar/paneles-carga-frame001.png" alt="Paneles solares">
             <div class="flow-kw-badge" id="flow-kw-badge">– kW</div>
             <span class="flow-lbl">Paneles solares</span>
           </div>
@@ -1804,21 +1804,17 @@
     if (img) img.src = 'grafico_solar/baterias_' + battFrame + '.png';
   }, 600);
 
-  // Panel flare: video MP4 (hardware-decoded, sin flicker en mobile)
+  // Panel flare: APNG (transparencia correcta, animación nativa del browser)
   let solarActive = false;
   let prevSolarActive = null;
-  const panelVideo = document.getElementById('paneles-video');
   setInterval(() => {
     if (solarActive === prevSolarActive) return;
     prevSolarActive = solarActive;
-    if (!panelVideo) return;
-    if (solarActive) {
-      panelVideo.currentTime = 0;
-      panelVideo.play().catch(() => {});
-    } else {
-      panelVideo.pause();
-      panelVideo.currentTime = 0;
-    }
+    const img = document.getElementById('paneles-img');
+    if (!img) return;
+    img.src = solarActive
+      ? 'grafico_solar/paneles-flare.png'
+      : 'grafico_solar/paneles-carga-frame001.png';
   }, 200);
 
   let invApagado = false;
