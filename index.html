@@ -476,6 +476,7 @@
       font-size: 14px;
     }
     .system-info-bar .sib-val { color: var(--text); }
+    .system-info-bar .sib-kwh { color: var(--green-dark); }
 
     .kwh-day-card {
       margin-top: 16px;
@@ -942,11 +943,16 @@
                 <div class="lbl">Potencia</div>
               </div>
             </div>
+
+            <div class="kwh-day-card">
+              <div class="kwh-day-value"><span id="rsb-kwh">–</span> <span class="kwh-day-unit">kWh</span></div>
+              <div class="kwh-day-label">Generación estimada / día</div>
+            </div>
+
             <div id="res-sistema-bar" class="res-sistema-bar result-hidden">
               <span class="rsb-item" id="rsb-paneles">–</span>
               <span class="rsb-item" id="rsb-inversor">–</span>
               <span class="rsb-item" id="rsb-sistema">–</span>
-              <span class="rsb-item" id="rsb-kwh">–</span>
             </div>
 
             <a href="https://amperio.com.ar/site/#contacto" class="cta-btn" target="_blank">
@@ -1159,11 +1165,7 @@
         </div>
         <div class="sib-item">Inversor <span class="sib-val" id="sib-inversor">–</span> kW</div>
         <div class="sib-item"><span class="sib-val" id="sib-sistema">–</span></div>
-      </div>
-
-      <div class="kwh-day-card">
-        <div class="kwh-day-value"><span id="sib-kwh">–</span> <span class="kwh-day-unit">kWh</span></div>
-        <div class="kwh-day-label">Generación estimada / día</div>
+        <div class="sib-item"><span class="sib-kwh" id="sib-kwh">–</span> kWh/día est.</div>
       </div>
 
       <div class="live-bottom">
@@ -1292,7 +1294,7 @@
       document.getElementById('rsb-paneles').textContent = paneles + ' paneles';
       document.getElementById('rsb-inversor').textContent = 'Inversor ' + inversorKw + ' kW';
       document.getElementById('rsb-sistema').textContent = sistemaNombre;
-      document.getElementById('rsb-kwh').textContent = '~' + kwh + ' kWh/día';
+      document.getElementById('rsb-kwh').textContent = '~' + kwh;
       rbar.classList.remove('result-hidden');
     }
   }
