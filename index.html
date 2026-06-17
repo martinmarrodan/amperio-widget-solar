@@ -685,16 +685,16 @@
     #casa-img-noluz { opacity: 0; transition: opacity 0.25s; }
 
     /* Paneles: arriba centro */
-    .fn-paneles { left: 50%; transform: translateX(-50%); top: 0; width: 22%; }
+    .fn-paneles { left: 50%; transform: translateX(-50%); top: 0; width: 22%; will-change: transform; }
 
     /* Casa: abajo izquierda */
-    .fn-casa { left: 5%; top: 43.5%; width: 18%; }
+    .fn-casa { left: 5%; top: 43.5%; width: 18%; will-change: transform; }
 
     /* Red: abajo derecha */
-    .fn-red { right: 3.5%; top: 43.5%; width: 20%; }
+    .fn-red { right: 3.5%; top: 43.5%; width: 20%; will-change: transform; }
 
     /* Baterías: abajo centro */
-    .fn-batt { left: 50%; transform: translateX(-50%); bottom: -3%; width: 20%; }
+    .fn-batt { left: 50%; transform: translateX(-50%); bottom: -3%; width: 20%; will-change: transform; }
 
     /* Inversor: centro del junction (top = 233/400 = 58.25%) */
     .fn-inversor {
