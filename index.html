@@ -1825,32 +1825,38 @@
   if (panelFrames[0].complete) drawPanelFrame(0);
 
   // Animación de flare — aceleración progresiva con pausa entre ciclos
+  // Usa requestAnimationFrame para sincronizar con el render del browser (evita flicker en mobile)
   let panelPos = 1.0;
   let panelSpd = 0.5;
   const PANEL_SPD_INC = 0.1;
   let panelPause = 0;
-  const PANEL_PAUSE_TICKS = 18; // 18 * 80ms ≈ 1.4s de pausa entre ciclos
+  const PANEL_PAUSE_TICKS = 18;
   let solarActive = false;
-  setInterval(() => {
-    if (!panelCtx) return;
-    if (!solarActive) {
-      panelPos = 1.0; panelSpd = 0.5; panelPause = 0;
-      drawPanelFrame(0);
-      return;
+  let lastPanelTs = 0;
+  const PANEL_MS = 80;
+
+  function panelAnimLoop(ts) {
+    if (ts - lastPanelTs >= PANEL_MS) {
+      lastPanelTs = ts;
+      if (!solarActive) {
+        panelPos = 1.0; panelSpd = 0.5; panelPause = 0;
+        drawPanelFrame(0);
+      } else if (panelPause > 0) {
+        panelPause--;
+        drawPanelFrame(0);
+      } else {
+        panelSpd += PANEL_SPD_INC;
+        panelPos += panelSpd;
+        if (panelPos > 240) {
+          panelPos = 1.0; panelSpd = 0.5; panelPause = PANEL_PAUSE_TICKS;
+        }
+        const frame = Math.min(239, Math.max(0, Math.round(panelPos) - 1));
+        drawPanelFrame(frame);
+      }
     }
-    if (panelPause > 0) {
-      panelPause--;
-      drawPanelFrame(0);
-      return;
-    }
-    panelSpd += PANEL_SPD_INC;
-    panelPos += panelSpd;
-    if (panelPos > 240) {
-      panelPos = 1.0; panelSpd = 0.5; panelPause = PANEL_PAUSE_TICKS;
-    }
-    const frame = Math.min(239, Math.max(0, Math.round(panelPos) - 1));
-    drawPanelFrame(frame);
-  }, 80);
+    requestAnimationFrame(panelAnimLoop);
+  }
+  requestAnimationFrame(panelAnimLoop);
 
   let invApagado = false;
 
