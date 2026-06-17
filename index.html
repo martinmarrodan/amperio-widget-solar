@@ -665,6 +665,7 @@
     .seg-house { stroke: #7ecb35; }
     .seg-grid  { stroke: #94a3b8; }
     .seg-batt  { stroke: #7ecb35; }
+    .seg-batt.discharge { stroke: #f59e0b; }
 
     /* Nodo central activo */
     #junction-dot.active { fill: #7ecb35; }
@@ -1694,7 +1695,7 @@
 
     // Reset all segments and arrows
     ['path-solar','path-house','path-grid','path-batt','path-batt-right'].forEach(id => {
-      const el = document.getElementById(id); if (el) el.classList.remove('active');
+      const el = document.getElementById(id); if (el) { el.classList.remove('active'); el.classList.remove('discharge'); }
     });
     ['arr-solar','arr-house-green','arr-house-gray','arr-house-amber',
      'arr-grid','arr-batt','arr-batt-up','arr-batt-right','arr-batt-right-discharge'].forEach(id => {
@@ -1740,6 +1741,7 @@
         } else {
           houseColor = '#f59e0b';
           on('path-batt',  'arr-batt-up');
+          document.getElementById('path-batt').classList.add('discharge');
           on('path-house', houseArr(houseColor));
           stateText = '🔋 Baterías – sin red';
         }
