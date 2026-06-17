@@ -772,6 +772,8 @@
     /* ---- RESPONSIVE LAYOUT ---- */
     .estimador-layout { display: block; }
     .result-placeholder { display: none; }
+    .live-layout { display: block; }
+    .live-right { display: block; }
     .live-bottom { display: block; }
 
     @media (min-width: 720px) {
@@ -812,8 +814,15 @@
       /* Ocultar placeholder cuando resultado está visible */
       #resultado:not(.result-hidden) ~ .result-placeholder { display: none; }
 
-      /* Live: solo gráfico */
-      .live-bottom { margin-top: 24px; }
+      /* Live: dos columnas */
+      .live-layout {
+        display: grid;
+        grid-template-columns: 55% 1fr;
+        gap: 32px;
+        align-items: start;
+      }
+      .flow-diagram { margin-bottom: 0; }
+      .live-bottom { margin-top: 20px; }
       .chart-wrap { margin-top: 0; }
     }
 
@@ -931,6 +940,8 @@
     <!-- Live -->
     <div class="panel" id="panel-live">
       <p class="section-label">Simulación en tiempo real</p>
+
+      <div class="live-layout">
 
       <!-- Diagrama de flujo energético -->
       <div class="flow-diagram">
@@ -1100,6 +1111,9 @@
         <div class="flow-state-label" id="flow-state-label">–</div>
       </div>
 
+      <!-- Columna derecha: controles + gráfico -->
+      <div class="live-right">
+
       <!-- Barra de potencia -->
       <div class="power-track">
         <div class="power-fill" id="power-fill" style="width:0%"></div>
@@ -1129,6 +1143,9 @@
           <canvas id="solar-chart"></canvas>
         </div>
       </div>
+
+      </div><!-- /live-right -->
+      </div><!-- /live-layout -->
     </div>
 
   </div>
