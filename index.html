@@ -817,35 +817,6 @@
       .chart-wrap { margin-top: 0; }
     }
 
-    /* Panel shimmer — CSS animation 60fps GPU, imagen con fondo blanco */
-    .panel-shimmer-wrap { position: relative; overflow: hidden; }
-    .panel-shimmer-wrap img { display: block; width: 100%; }
-    .panel-shimmer {
-      position: absolute; top: -20%; left: -60%; width: 120%; height: 140%;
-      background: linear-gradient(125deg,
-        transparent 0%,
-        transparent 30%,
-        rgba(60,210,170,0.45) 42%,
-        rgba(100,235,195,0.75) 50%,
-        rgba(60,210,170,0.45) 58%,
-        transparent 70%,
-        transparent 100%);
-      mix-blend-mode: lighten;
-      pointer-events: none;
-      opacity: 0;
-      transform: translateX(-100%);
-    }
-    .panel-shimmer.active {
-      animation: panel-flare 6.5s cubic-bezier(0.35, 0, 0.75, 1) infinite;
-    }
-    @keyframes panel-flare {
-      0%   { transform: translateX(-100%); opacity: 0; }
-      8%   { transform: translateX(-80%);  opacity: 0; }
-      16%  { transform: translateX(-40%);  opacity: 1; }
-      68%  { transform: translateX(110%);  opacity: 1; }
-      76%  { transform: translateX(130%);  opacity: 0; }
-      100% { transform: translateX(130%);  opacity: 0; }
-    }
   </style>
 </head>
 <body>
@@ -1086,10 +1057,7 @@
 
           <!-- Paneles (arriba centro) -->
           <div class="flow-node fn-paneles">
-            <div class="panel-shimmer-wrap">
-              <img id="paneles-img" src="grafico_solar/paneles-carga-frame001.png" alt="Paneles solares">
-              <div id="panel-shimmer" class="panel-shimmer"></div>
-            </div>
+            <img id="paneles-img" src="grafico_solar/paneles-carga-frame001.png" alt="Paneles solares">
             <div class="flow-kw-badge" id="flow-kw-badge">– kW</div>
             <span class="flow-lbl">Paneles solares</span>
           </div>
@@ -1837,14 +1805,16 @@
     if (img) img.src = 'grafico_solar/baterias_' + battFrame + '.png';
   }, 600);
 
-  // Panel shimmer: CSS animation puro (60fps GPU, sin flicker en mobile)
+  // Panel flare: WebP animado a 30fps (frames 60-240)
   let solarActive = false;
   let prevSolarActive = null;
   setInterval(() => {
     if (solarActive === prevSolarActive) return;
     prevSolarActive = solarActive;
-    const shimmer = document.getElementById('panel-shimmer');
-    if (shimmer) shimmer.classList.toggle('active', solarActive);
+    const img = document.getElementById('paneles-img');
+    if (img) img.src = solarActive
+      ? 'grafico_solar/paneles-flare.webp'
+      : 'grafico_solar/paneles-carga-frame001.png';
   }, 200);
 
   let invApagado = false;
