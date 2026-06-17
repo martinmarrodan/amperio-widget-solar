@@ -679,6 +679,7 @@
     }
 
     .flow-node img { width: 100%; display: block; object-fit: contain; }
+    .flow-node canvas { width: 100%; display: block; }
     .casa-img-wrap { position: relative; width: 100%; }
     .casa-img-wrap img { position: absolute; top: 0; left: 0; width: 100%; }
     .casa-img-wrap #casa-img { position: relative; }
@@ -1056,7 +1057,7 @@
 
           <!-- Paneles (arriba centro) -->
           <div class="flow-node fn-paneles">
-            <img id="paneles-img" src="grafico_solar/paneles-carga-frame001.png" alt="Paneles solares">
+            <canvas id="paneles-canvas" width="512" height="564"></canvas>
             <div class="flow-kw-badge" id="flow-kw-badge">– kW</div>
             <span class="flow-lbl">Paneles solares</span>
           </div>
@@ -1804,15 +1805,25 @@
     if (img) img.src = 'grafico_solar/baterias_' + battFrame + '.png';
   }, 600);
 
-  // Precargar todos los frames de paneles para evitar titileo
+  // Precargar todos los frames de paneles
   const panelFrames = [];
   for (let i = 1; i <= 240; i++) {
     const pre = new Image();
     pre.src = 'grafico_solar/paneles-carga-frame' + String(i).padStart(3, '0') + '.png';
     panelFrames.push(pre);
   }
+  const panelCanvas = document.getElementById('paneles-canvas');
+  const panelCtx = panelCanvas ? panelCanvas.getContext('2d') : null;
+  function drawPanelFrame(idx) {
+    if (!panelCtx) return;
+    panelCtx.clearRect(0, 0, panelCanvas.width, panelCanvas.height);
+    panelCtx.drawImage(panelFrames[idx], 0, 0, panelCanvas.width, panelCanvas.height);
+  }
+  // Dibujar frame inicial
+  panelFrames[0].onload = () => drawPanelFrame(0);
+  if (panelFrames[0].complete) drawPanelFrame(0);
 
-  // Animación de flare de paneles solares — aceleración progresiva con pausa entre ciclos
+  // Animación de flare — aceleración progresiva con pausa entre ciclos
   let panelPos = 1.0;
   let panelSpd = 0.5;
   const PANEL_SPD_INC = 0.1;
@@ -1820,16 +1831,15 @@
   const PANEL_PAUSE_TICKS = 18; // 18 * 80ms ≈ 1.4s de pausa entre ciclos
   let solarActive = false;
   setInterval(() => {
-    const img = document.getElementById('paneles-img');
-    if (!img) return;
+    if (!panelCtx) return;
     if (!solarActive) {
       panelPos = 1.0; panelSpd = 0.5; panelPause = 0;
-      img.src = panelFrames[0].src;
+      drawPanelFrame(0);
       return;
     }
     if (panelPause > 0) {
       panelPause--;
-      img.src = panelFrames[0].src;
+      drawPanelFrame(0);
       return;
     }
     panelSpd += PANEL_SPD_INC;
@@ -1838,7 +1848,7 @@
       panelPos = 1.0; panelSpd = 0.5; panelPause = PANEL_PAUSE_TICKS;
     }
     const frame = Math.min(239, Math.max(0, Math.round(panelPos) - 1));
-    img.src = panelFrames[frame].src;
+    drawPanelFrame(frame);
   }, 80);
 
   let invApagado = false;
