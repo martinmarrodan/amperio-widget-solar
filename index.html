@@ -145,6 +145,30 @@
       margin-bottom: 16px;
     }
 
+    .hero-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 9px 16px;
+      background: var(--green);
+      color: var(--dark);
+      border-radius: var(--radius-pill);
+      font-family: inherit;
+      font-weight: 800;
+      font-size: 12px;
+      text-decoration: none;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+    .hero-cta:hover { background: #6ab82a; }
+
     .hero-card::before {
       content: '';
       position: absolute;
@@ -919,7 +943,10 @@
 
   <!-- Dark card — subtítulo + tabs -->
   <div class="hero-card">
-    <p class="hero-sub">Calculá tu sistema y monitoreá en tiempo real</p>
+    <div class="hero-top">
+      <p class="hero-sub">Calculá tu sistema y monitoreá en tiempo real</p>
+      <a href="https://amperio.com.ar/site/#contacto" class="hero-cta" target="_blank">Solicitá presupuesto →</a>
+    </div>
     <div class="tabs">
       <button class="tab-btn active" onclick="switchTab('estimador')">Estimador de paneles</button>
       <button class="tab-btn" onclick="switchTab('live')">Generación en vivo</button>
@@ -984,7 +1011,6 @@
             <div class="kwh-day-card">
               <div class="kwh-day-value"><span id="rsb-kwh">–</span> <span class="kwh-day-unit">kWh</span></div>
               <div class="kwh-day-label">Generación estimada / día</div>
-              <a href="https://amperio.com.ar/site/#contacto" class="kwh-cta-btn" target="_blank">Solicitá tu presupuesto <span>→</span></a>
             </div>
 
             <div id="res-sistema-bar" class="spec-chips result-hidden">
