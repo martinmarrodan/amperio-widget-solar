@@ -662,6 +662,46 @@
       color: var(--gray);
     }
 
+    .chart-nav {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .chart-nav-btn {
+      background: none;
+      border: 1.5px solid var(--gray-light);
+      border-radius: 50%;
+      width: 22px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 15px;
+      color: var(--gray);
+      line-height: 1;
+      padding: 0;
+      transition: all 0.15s;
+      flex-shrink: 0;
+    }
+    .chart-nav-btn:hover {
+      background: var(--green-light);
+      border-color: var(--green-sage);
+      color: var(--green-dark);
+    }
+    .chart-kwh-row {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 8px;
+      margin-top: -4px;
+    }
+    .chart-kwh-est {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--green-dark);
+      letter-spacing: 0.02em;
+    }
+
     canvas#solar-chart {
       width: 100%;
       height: 140px;
@@ -1257,7 +1297,14 @@
         <div class="chart-wrap">
           <div class="chart-header">
             <span class="chart-title">Curva de generación diaria</span>
-            <span class="chart-meta" id="chart-month-label">–</span>
+            <div class="chart-nav">
+              <button class="chart-nav-btn" onclick="prevChartMonth()" title="Mes anterior">‹</button>
+              <span class="chart-meta" id="chart-month-label">–</span>
+              <button class="chart-nav-btn" onclick="nextChartMonth()" title="Mes siguiente">›</button>
+            </div>
+          </div>
+          <div class="chart-kwh-row">
+            <span class="chart-kwh-est" id="chart-kwh-est"></span>
           </div>
           <canvas id="solar-chart"></canvas>
         </div>
@@ -1432,8 +1479,16 @@
 
   let dynSunRise = null, dynSunSet = null;
 
+  let chartMonth = new Date().getMonth();
+
+  function prevChartMonth() { chartMonth = (chartMonth + 11) % 12; drawChart(); }
+  function nextChartMonth() { chartMonth = (chartMonth + 1)  % 12; drawChart(); }
+
   function getSunTimes(month) {
-    if (dynSunRise !== null && dynSunSet !== null) return [dynSunRise, dynSunSet];
+    // Use dynamic API data only for the current real month
+    if (month === new Date().getMonth() && dynSunRise !== null && dynSunSet !== null) {
+      return [dynSunRise, dynSunSet];
+    }
     return SUN_TIMES[month];
   }
 
@@ -1493,12 +1548,18 @@
     ctx.scale(dpr, dpr);
     ctx.translate(0.5, 0.5); // sub-pixel sharpness
 
-    const now   = new Date();
-    const month = now.getMonth(); // 0-11
-    const maxKw = getMaxKw();
+    const now      = new Date();
+    const month    = chartMonth;
+    const maxKw    = getMaxKw();
     const currentH = now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600;
+    const isCurrentMonth = (month === now.getMonth());
 
     document.getElementById('chart-month-label').textContent = MONTH_NAMES[month];
+    const kwhEst = document.getElementById('chart-kwh-est');
+    if (kwhEst) {
+      const est = calcDailyKwh(maxKw, month).toFixed(1);
+      kwhEst.textContent = '~' + est + ' kWh/día est.';
+    }
 
     // Padding interno
     const padL = 36, padR = 12, padT = 12, padB = 28;
@@ -1633,41 +1694,40 @@
       ctx.fillText(formatHour(h), x, padT + 34);
     });
 
-    const nowX = xOf(currentH);
-    ctx.beginPath();
-    ctx.moveTo(nowX, padT);
-    ctx.lineTo(nowX, padT + chartH);
-    ctx.strokeStyle = 'rgba(17,17,17,0.25)';
-    ctx.lineWidth = 1.5;
-    ctx.setLineDash([3, 3]);
-    ctx.stroke();
-    ctx.setLineDash([]);
+    if (isCurrentMonth) {
+      const nowX = xOf(currentH);
+      ctx.beginPath();
+      ctx.moveTo(nowX, padT);
+      ctx.lineTo(nowX, padT + chartH);
+      ctx.strokeStyle = 'rgba(17,17,17,0.25)';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([3, 3]);
+      ctx.stroke();
+      ctx.setLineDash([]);
 
-    // Punto en la curva en hora actual
-    const nowKw = solarPower(currentH, maxKw, month);
-    const nowY  = yOf(nowKw);
-    // Halo
-    ctx.beginPath();
-    ctx.arc(nowX, nowY, 7, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(126,203,53,0.25)';
-    ctx.fill();
-    // Punto
-    ctx.beginPath();
-    ctx.arc(nowX, nowY, 4, 0, Math.PI * 2);
-    ctx.fillStyle = '#7ecb35';
-    ctx.fill();
-    ctx.strokeStyle = '#fff';
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
+      // Punto en la curva en hora actual
+      const nowKw = solarPower(currentH, maxKw, month);
+      const nowY  = yOf(nowKw);
+      ctx.beginPath();
+      ctx.arc(nowX, nowY, 7, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(126,203,53,0.25)';
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(nowX, nowY, 4, 0, Math.PI * 2);
+      ctx.fillStyle = '#7ecb35';
+      ctx.fill();
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
 
-    // Label encima del punto
-    if (nowKw > 0.01) {
-      const label = nowKw.toFixed(2) + ' kW';
-      const lx = Math.min(nowX, padL + chartW - 40);
-      ctx.fillStyle = '#111';
-      ctx.font = `700 10px 'Nexa', sans-serif`;
-      ctx.textAlign = 'center';
-      ctx.fillText(label, lx, Math.max(nowY - 10, padT + 10));
+      if (nowKw > 0.01) {
+        const label = nowKw.toFixed(2) + ' kW';
+        const lx = Math.min(nowX, padL + chartW - 40);
+        ctx.fillStyle = '#111';
+        ctx.font = `700 10px 'Nexa', sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.fillText(label, lx, Math.max(nowY - 10, padT + 10));
+      }
     }
 
     // Scrubbing interactivo
