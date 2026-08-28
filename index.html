@@ -402,6 +402,14 @@
     .result-chip.dark .val { color: var(--green); }
     .result-chip.dark .lbl { color: rgba(255,255,255,0.45); }
 
+    .panel-note {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--gray);
+      text-align: center;
+      margin-top: 8px;
+    }
+
     .cta-btn {
       display: block;
       text-align: center;
@@ -707,6 +715,75 @@
       height: 140px;
       display: block;
     }
+
+    /* ---- SCRUB SLIDER (debajo del gráfico) ---- */
+    .scrub-slider-wrap {
+      padding: 4px 12px 0 36px; /* mismo padL/padR que usa el canvas para alinear con el eje X */
+    }
+
+    .scrub-track {
+      position: relative;
+      height: 6px;
+      background: var(--gray-light);
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      touch-action: none;
+    }
+
+    .scrub-live-mark {
+      position: absolute;
+      top: 50%;
+      width: 3px;
+      height: 12px;
+      background: rgba(126,203,53,0.45);
+      border-radius: 2px;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .scrub-thumb {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 16px;
+      height: 16px;
+      background: var(--green);
+      border: 2px solid #fff;
+      border-radius: 50%;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+      transform: translate(-50%, -50%);
+      cursor: grab;
+    }
+    .scrub-thumb:active { cursor: grabbing; }
+
+    .scrub-thumb::before {
+      /* área de toque más grande sin agrandar el punto visualmente */
+      content: '';
+      position: absolute;
+      inset: -10px;
+    }
+
+    .scrub-thumb.live::after {
+      content: '';
+      position: absolute;
+      inset: -5px;
+      border-radius: 50%;
+      border: 1.5px solid var(--green);
+      animation: blink 1.4s ease-in-out infinite;
+    }
+
+    .scrub-hint {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--gray);
+      text-align: center;
+    }
+    .scrub-hint-icon { font-size: 13px; }
 
     /* ---- FOOTER CARD ---- */
     .footer-card {
@@ -1017,10 +1094,18 @@
             <label>Tipo de sistema</label>
             <div class="select-wrap">
               <select id="sistema-tipo" onchange="toggleRedTipo()">
-                <option value="ongrid">On Grid</option>
-                <option value="hibrido">Híbrido</option>
-                <option value="offgrid">Off Grid</option>
+                <option value="ongrid">Ahorro (On Grid)</option>
+                <option value="hibrido">Ahorro + Respaldo (Híbrido)</option>
+                <option value="offgrid">Sin red eléctrica (Off Grid)</option>
               </select>
+            </div>
+          </div>
+
+          <div class="form-group result-hidden" id="autonomia-group">
+            <label>Horas de autonomía deseadas</label>
+            <div class="input-wrap">
+              <input type="number" id="horas-autonomia" min="0" max="72" placeholder="Ej: 8" oninput="calcularBaterias()" />
+              <span class="unit">horas</span>
             </div>
           </div>
 
@@ -1038,10 +1123,11 @@
                 <div class="lbl">Potencia</div>
               </div>
             </div>
+            <p class="panel-note">Se consideran módulos de 590Wp</p>
 
             <div class="kwh-day-card">
               <div class="kwh-day-value"><span id="rsb-kwh">–</span> <span class="kwh-day-unit">kWh</span></div>
-              <div class="kwh-day-label">Generación estimada / día</div>
+              <div class="kwh-day-label">Energía generada x día promedio</div>
             </div>
 
             <div id="res-sistema-bar" class="spec-chips result-hidden">
@@ -1072,6 +1158,12 @@
                 <span id="rsb-sistema">–</span>
               </div>
             </div>
+
+            <div class="kwh-day-card result-hidden" id="batt-result-card">
+              <div class="kwh-day-value"><span id="res-batt-cant">–</span> <span class="kwh-day-unit">baterías</span></div>
+              <div class="kwh-day-label">Autonomía: <span id="res-batt-kwh">–</span> kWh</div>
+            </div>
+            <p class="panel-note result-hidden" id="batt-note">Se consideran baterías de litio de 5kWh de capacidad cada una.</p>
           </div>
           <div class="result-placeholder">
             <div class="result-placeholder-icon">☀️</div>
@@ -1298,6 +1390,17 @@
             <span class="chart-kwh-est" id="chart-kwh-est"></span>
           </div>
           <canvas id="solar-chart"></canvas>
+
+          <div class="scrub-slider-wrap">
+            <div class="scrub-track" id="scrub-track">
+              <div class="scrub-live-mark" id="scrub-live-mark"></div>
+              <div class="scrub-thumb" id="scrub-thumb"></div>
+            </div>
+          </div>
+          <div class="scrub-hint">
+            <span class="scrub-hint-icon">👆</span>
+            <span id="scrub-hint-text">Deslizá para simular la generación a distintas horas</span>
+          </div>
         </div>
       </div>
 
@@ -1337,6 +1440,42 @@
 
   function toggleRedTipo() {
     applySistemaDiagram();
+    toggleAutonomiaField();
+  }
+
+  // -- Baterías / autonomía
+  const CAPACIDAD_BATERIA_KWH = 5;
+
+  function toggleAutonomiaField() {
+    const st = document.getElementById('sistema-tipo').value;
+    const needsAutonomia = st === 'hibrido' || st === 'offgrid';
+    document.getElementById('autonomia-group').classList.toggle('result-hidden', !needsAutonomia);
+    if (!needsAutonomia) document.getElementById('horas-autonomia').value = '';
+    calcularBaterias();
+  }
+
+  function calcularBaterias() {
+    const st = document.getElementById('sistema-tipo').value;
+    const card = document.getElementById('batt-result-card');
+    const note = document.getElementById('batt-note');
+    const horasAutonomia = parseFloat(document.getElementById('horas-autonomia').value) || 0;
+
+    if ((st !== 'hibrido' && st !== 'offgrid') || horasAutonomia <= 0) {
+      card.classList.add('result-hidden');
+      note.classList.add('result-hidden');
+      return;
+    }
+
+    const consumoKwhMes = parseFloat(document.getElementById('consumo').value) || 0;
+    const kwhDia = consumoKwhMes / 30;
+    const kwhBateriaNecesaria = horasAutonomia * (kwhDia / 24);
+    const cantidadBaterias = Math.max(1, Math.ceil(kwhBateriaNecesaria / CAPACIDAD_BATERIA_KWH));
+
+    document.getElementById('res-batt-cant').textContent = cantidadBaterias;
+    document.getElementById('res-batt-kwh').textContent = kwhBateriaNecesaria.toFixed(1);
+
+    card.classList.remove('result-hidden');
+    note.classList.remove('result-hidden');
   }
 
   function onGridToggle() {
@@ -1391,19 +1530,16 @@
 
   const INVERTER_SIZES = [1.5, 2, 3, 3.6, 4, 5, 6, 8, 10, 12, 15, 20, 25, 30, 40, 50];
 
-  function calcDailyKwh(maxKw, month) {
-    const step = 24 / 1440;
-    let total = 0;
-    for (let i = 0; i <= 1440; i++) {
-      total += solarPower(i * step, maxKw, month) * step;
-    }
-    return total;
+  // Horas solares pico de referencia
+  const HPS_BASE = 4.2;
+
+  function calcDailyKwh(maxKw) {
+    return maxKw * HPS_BASE;
   }
 
   function updateSystemInfoBar(paneles, inversorKw, sistemaNombre) {
-    const month = new Date().getMonth();
-    const maxKw = paneles * 0.55;
-    const kwh = calcDailyKwh(maxKw, month).toFixed(1);
+    const maxKw = paneles * PANEL_KW;
+    const kwh = calcDailyKwh(maxKw).toFixed(1);
 
     // Live tab bar
     document.getElementById('live-paneles').value = paneles;
@@ -1426,13 +1562,13 @@
     const consumo = parseFloat(document.getElementById('consumo').value) || 350;
     // Factor estacional promedio anual (para dimensionar el sistema para todo el año)
     const avgSeasonFactor = MONTH_FACTOR.reduce((a, b) => a + b, 0) / MONTH_FACTOR.length;
-    const hps = 4.0 * avgSeasonFactor;
-    const kwPorPanel = 0.55 * hps * 30 * 0.80;
+    const hps = HPS_BASE * avgSeasonFactor;
+    const kwPorPanel = PANEL_KW * hps * 30;
     const paneles = Math.ceil(consumo / kwPorPanel);
-    const potenciaKw = (paneles * 0.55).toFixed(1);
+    const potenciaKw = (paneles * PANEL_KW).toFixed(1);
 
     // Tamaño de inversor: siguiente potencia estándar por encima del 90% del pico FV
-    const kWpTotal = paneles * 0.55;
+    const kWpTotal = paneles * PANEL_KW;
     const inversorKw = INVERTER_SIZES.find(s => s >= kWpTotal * 0.9) || 50;
 
     const sistemaTipo = document.getElementById('sistema-tipo').value;
@@ -1448,6 +1584,7 @@
     updateMax();
     updateSystemInfoBar(paneles, inversorKw, sistemaNombre);
     applySistemaDiagram();
+    calcularBaterias();
 
     const el = document.getElementById('resultado');
     el.classList.remove('result-hidden');
@@ -1548,7 +1685,7 @@
     document.getElementById('chart-month-label').textContent = MONTH_NAMES[month];
     const kwhEst = document.getElementById('chart-kwh-est');
     if (kwhEst) {
-      const est = calcDailyKwh(maxKw, month).toFixed(1);
+      const est = calcDailyKwh(maxKw).toFixed(1);
       kwhEst.textContent = '~' + est + ' kWh/día est.';
     }
 
@@ -1825,8 +1962,76 @@
     });
   }
 
+  // -- Slider deslizable debajo del gráfico (misma lógica que el hover del canvas)
+  let scrubDragging = false;
+
+  function initScrubSlider() {
+    const track = document.getElementById('scrub-track');
+    const thumb = document.getElementById('scrub-thumb');
+    const canvas = document.getElementById('solar-chart');
+    const hintText = document.getElementById('scrub-hint-text');
+    if (!track || !thumb || !canvas) return;
+
+    const hourFromClientX = clientX => {
+      const rect = track.getBoundingClientRect();
+      const pct = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
+      return pct * 24;
+    };
+
+    const dragTo = clientX => {
+      const hour = hourFromClientX(clientX);
+      thumb.style.left = (hour / 24 * 100) + '%';
+      thumb.classList.remove('live');
+      hintText.textContent = 'Simulando las ' + formatHour(hour);
+
+      const padL = 36, padR = 12;
+      const chartW = canvas.offsetWidth - padL - padR;
+      chartHoverX = padL + (hour / 24) * chartW;
+      scrubTo(chartHoverX, canvas);
+      drawChart();
+    };
+
+    const startDrag = clientX => { scrubDragging = true; dragTo(clientX); };
+
+    const endDrag = () => {
+      if (!scrubDragging) return;
+      scrubDragging = false;
+      chartHoverX = null;
+      updateFlowDiagram(getLivePower(), getMaxKw());
+      drawChart();
+      updateScrubLive();
+    };
+
+    track.addEventListener('mousedown', e => startDrag(e.clientX));
+    window.addEventListener('mousemove', e => { if (scrubDragging) dragTo(e.clientX); });
+    window.addEventListener('mouseup', endDrag);
+
+    track.addEventListener('touchstart', e => startDrag(e.touches[0].clientX), { passive: true });
+    window.addEventListener('touchmove', e => { if (scrubDragging) dragTo(e.touches[0].clientX); }, { passive: true });
+    window.addEventListener('touchend', endDrag);
+  }
+
+  // Mueve el thumb y la marca "en vivo" a la hora real actual (si no se está arrastrando)
+  function updateScrubLive() {
+    const thumb = document.getElementById('scrub-thumb');
+    const liveMark = document.getElementById('scrub-live-mark');
+    const hintText = document.getElementById('scrub-hint-text');
+    if (!thumb || !liveMark) return;
+
+    const now = new Date();
+    const h = now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600;
+    const pct = (h / 24) * 100;
+    liveMark.style.left = pct + '%';
+
+    if (!scrubDragging) {
+      thumb.style.left = pct + '%';
+      thumb.classList.add('live');
+      hintText.textContent = 'Deslizá para simular la generación a distintas horas';
+    }
+  }
+
   // -- Live simulation
-  const PANEL_KW = 0.55;
+  const PANEL_KW = 0.59;
   let energyToday = 0;
   let tipoInstalacion = 'residencial';
 
@@ -1839,9 +2044,8 @@
     document.getElementById('bar-max-label').textContent = 'máx. ' + maxKw.toFixed(1) + ' kW';
     // Auto-update system info bar
     const paneles = parseInt(document.getElementById('live-paneles').value) || 8;
-    const inversorKw = INVERTER_SIZES.find(s => s >= paneles * 0.55 * 0.9) || 50;
-    const month = new Date().getMonth();
-    const kwh = calcDailyKwh(maxKw, month).toFixed(1);
+    const inversorKw = INVERTER_SIZES.find(s => s >= paneles * PANEL_KW * 0.9) || 50;
+    const kwh = calcDailyKwh(maxKw).toFixed(1);
     const sibInv = document.getElementById('sib-inversor');
     const sibKwh = document.getElementById('sib-kwh');
     if (sibInv) sibInv.textContent = inversorKw;
@@ -1867,6 +2071,7 @@
     updateMax();
     if (chartHoverX === null) updateFlowDiagram(power, max);
     drawChart();
+    updateScrubLive();
   }
 
   function updateFlowDiagram(power, maxKw) {
@@ -2030,7 +2235,10 @@
   setInterval(tickLive, 2000);
   tickLive();
   initChartScrub();
+  initScrubSlider();
+  updateScrubLive();
   applySistemaDiagram();
+  toggleAutonomiaField();
 </script>
 
 </body>
